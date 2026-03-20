@@ -45,7 +45,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png">
 <meta property="article:published_time" content="2024-01-01T10:01:37.983Z">
-<meta property="article:modified_time" content="2026-03-09T22:13:51.594Z">
+<meta property="article:modified_time" content="2026-03-12T03:27:10.921Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png">
@@ -1596,7 +1596,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     debug: "env",
     cdn: {"js":{"app":"/js/app.js","parallax":"/js/plugins/parallax.js","rightMenu":"/js/plugins/rightMenu.js","rightMenus":"/js/plugins/rightMenus.js","sites":"/js/plugins/tags/sites.js","friends":"/js/plugins/tags/friends.js","contributors":"/js/plugins/tags/contributors.js","search":"/js/search/hexo.js"},"css":{"style":"/css/style.css"}},
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1773094437039),
+    lastupdate: new Date(1773983857562),
     sidebar: {
       for_page: ["blogger","category","tagcloud","webinfo","lastupdate","donate"],
       for_post: ["toc"],
@@ -2538,6 +2538,232 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 </blockquote>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Input validation</span><br><span class="line">check returnOrderId,costomerId,email address 是否合法</span><br><span class="line">enrichment </span><br><span class="line">Add product category, warehouse location, or shipment carrier details to the order info retrieved from Order Service.</span><br><span class="line">cache</span><br><span class="line">Before calling the Order Service, RMS checks our caching layer (distributed cache：redis) to see whether the relevant order information has been recently cached. This helps reduce unnecessary service calls and improves response time.</span><br></pre></td></tr></table></figure>
 
+<p>deepdive Ques</p>
+<h1 id="深挖简历：面试官会继续问的问题（高频-深度）"><a href="#深挖简历：面试官会继续问的问题（高频-深度）" class="headerlink" title="深挖简历：面试官会继续问的问题（高频 + 深度）"></a><strong>深挖简历：面试官会继续问的问题（高频 + 深度）</strong></h1><h2 id="🎯-1-关于整体架构"><a href="#🎯-1-关于整体架构" class="headerlink" title="🎯 1. 关于整体架构"></a><strong>🎯 1. 关于整体架构</strong></h2><ol>
+<li><p><strong>为什么要同时使用 API Gateway 和 Load Balancer？它们的职责怎么划分？有没有重叠？</strong></p>
+</li>
+<li><p><strong>API Gateway 的认证逻辑是如何实现的？你们使用的是 JWT、OAuth2、Session 还是内部 token？为什么？</strong></p>
+</li>
+<li><p><strong>你们是基于什么来决定 RMS 要水平扩缩容？是 CPU？队列长度？还是自定义指标？</strong></p>
+<blockquote>
+<p>在 Kubernetes 环境中，我们其实不需要显式配置传统的 Load Balancer。</p>
+<p>来自外部的流量进入系统，通常会经过两个层级：</p>
+<p><strong>(1) API Gateway（负责逻辑上的网关能力）</strong></p>
+<ul>
+<li>请求路由</li>
+<li>身份认证 &#x2F; 鉴权</li>
+<li>限流</li>
+<li>灰度发布</li>
+<li>日志收集</li>
+<li>加解密</li>
+</ul>
+<h4 id="云-Load-Balancer（Cloud-LB）"><a href="#云-Load-Balancer（Cloud-LB）" class="headerlink" title="云 Load Balancer（Cloud LB）"></a><strong>云 Load Balancer（Cloud LB）</strong></h4><ul>
+<li><strong>本质</strong>：云厂商提供的负载均衡服务（AWS ELB, GCP LB, Azure LB）</li>
+<li><strong>作用</strong>：<ul>
+<li>把外部互联网流量分发到你的 Kubernetes 集群节点上（Node）</li>
+<li>保证高可用：如果某个节点挂掉，流量自动导向其他节点</li>
+<li>提供固定公网 IP &#x2F; DNS</li>
+</ul>
+</li>
+<li><strong>触发方式</strong>：<ul>
+<li>当你在 Kubernetes 中创建 <code>Service type=LoadBalancer</code> 时，K8S 会自动向云厂商请求一个 LB，并把它和 Ingress &#x2F; Service 绑定</li>
+</ul>
+</li>
+</ul>
+<h4 id="Ingress-Controller"><a href="#Ingress-Controller" class="headerlink" title="Ingress Controller"></a><strong>Ingress Controller</strong></h4><ul>
+<li><strong>本质</strong>：Kubernetes 内部的一个组件，用来处理 HTTP&#x2F;HTTPS 请求的路由。</li>
+<li><strong>作用</strong>：<ul>
+<li>根据 URL &#x2F; Host &#x2F; Path 把请求转发到对应的 Service（也就是你的 RMS 或其他微服务）</li>
+<li>支持 TLS&#x2F;HTTPS 终止</li>
+<li>支持负载均衡（把请求在同一个 Service 的多个 Pod 间分发）</li>
+<li>支持限流、重写 URL、认证等高级功能（具体看实现）</li>
+</ul>
+</li>
+<li><strong>常见实现</strong>：<ul>
+<li>Nginx Ingress Controller</li>
+<li>Traefik</li>
+<li>Istio &#x2F; Kong（带更多服务网格能力）</li>
+</ul>
+</li>
+</ul>
+<p><strong>(2) K8S Service（负责负载均衡，但属于基础设施能力）</strong></p>
+<ul>
+<li>Kubernetes 的 Service（ClusterIP &#x2F; NodePort &#x2F; Ingress）会自动将流量均匀分发到多个 RMS pod</li>
+<li>这里的负载均衡不需要业务开发参与</li>
+</ul>
+<p>两者没有功能重叠：</p>
+<ul>
+<li><strong>API Gateway 解决上层业务网关问题</strong></li>
+<li><strong>K8S 自带的负载均衡解决下层流量分发问题</strong></li>
+</ul>
+<p>所以虽然我之前描述里写成 Load Balancer，但在真实架构里，这个 LB 是 Kubernetes 内置的，而不是我们自己配置的独立组件。</p>
+</blockquote>
+<blockquote>
+<p>用户登录时会向 Login Service 发送用户名密码。</p>
+<p>Login Service 负责：</p>
+<ol>
+<li>校验账号</li>
+<li>生成 JWT 或 session token</li>
+<li>返回给前端</li>
+</ol>
+<p>后续 RMS 收到用户请求时：</p>
+<ul>
+<li>RMS 不会自己解析和验证 token</li>
+<li>而是将 token 交给 Login Service 进行统一验证</li>
+</ul>
+<p><strong>原因有两个：</strong></p>
+<p><strong>① 保证 Token 的中心化控制（Single Source of Truth）</strong></p>
+<ul>
+<li>如果 token 格式或规则更新，只需要改 Login Service</li>
+<li>不需要每个微服务更新</li>
+</ul>
+<p><strong>② 避免业务服务中嵌入安全逻辑，降低耦合</strong></p>
+<ul>
+<li>RMS 专注业务逻辑（Return Management）</li>
+<li>安全逻辑由 Login Service 专门负责</li>
+</ul>
+<p>多数公司会使用这种“Authentication Service + API Gateway + 微服务”的组合方式来保证一致性、安全性和可维护性。</p>
+</blockquote>
+<blockquote>
+<p>在我们的部署中，RMS 是通过 Kubernetes 的 HPA（Horizontal Pod Autoscaler）进行自动扩缩容的。</p>
+<p>虽然具体的监控指标由平台团队配置，但一般会基于以下几类指标：</p>
+<p><strong>① CPU 使用率（最常见）</strong></p>
+<ul>
+<li>比如 pod 的 CPU 连续 1～2 分钟超过 70% 就扩容</li>
+</ul>
+<p><strong>② 内存使用率</strong></p>
+<ul>
+<li>防止应用频繁 OOM</li>
+</ul>
+<p><strong>③ 自定义业务指标（更高级）</strong></p>
+<ul>
+<li>请求响应时间</li>
+<li>Pending 请求数量</li>
+<li>Kafka 消费速率</li>
+</ul>
+<p><strong>④ 事件队列长度</strong></p>
+<ul>
+<li>如果消息堆积，说明处理能力不足，需要扩容</li>
+</ul>
+<p>我们团队不需要手动扩容，只要 RMS 流量上升，K8S 会自动启动更多 pod；当流量下降时，pod 会自动减少。</p>
+</blockquote>
+</li>
+</ol>
+<hr>
+<h2 id="📡-2-服务之间的通信-性能"><a href="#📡-2-服务之间的通信-性能" class="headerlink" title="📡 2. 服务之间的通信 &amp; 性能"></a><strong>📡 2. 服务之间的通信 &amp; 性能</strong></h2><ol>
+<li><p><strong>RMS 调用 Order Service 时，是同步调用还是异步调用？为什么？</strong></p>
+</li>
+<li><p><strong>如果 Order Service 挂掉了，RMS 怎么处理？你们有用重试、fallback、熔断吗？</strong></p>
+</li>
+<li><p><strong>你们如何保证 Order Service 返回的数据不会拖慢整个链路？有做缓存吗？缓存策略是什么？</strong></p>
+<blockquote>
+<p>RMS 调用 Order Service 是同步的 REST 调用。<br>原因是：RMS 在决定是否允许退款、是否需要用户寄回商品之前，必须立即拿到订单的当前状态（如 <em>pending, shipped, delivered</em>）。</p>
+<p>这些信息是决策链路的一部分，因此必须同步获取，否则 RMS 无法继续业务流程。</p>
+<p>另外，订单状态属于用户级别的关键数据，不适合做异步查询，否则会导致用户端体验不一致或状态过期。</p>
+</blockquote>
+<p>总结一句话：<br><strong>Order Service 是关键业务依赖，必须实时获取状态 → 所以采用同步调用。</strong></p>
+<blockquote>
+<p>我们在 RMS 与 Order Service 的调用链路上使用了 <strong>Circuit Breaker（熔断器）</strong>，并且带有 <strong>超时控制和自动重试</strong>。</p>
+<p><strong>调用失败时，处理策略通常是：</strong></p>
+<p><strong>第一步：快速失败（Fail Fast）</strong></p>
+<ul>
+<li>如果 Order Service 已经进入熔断状态</li>
+<li>RMS 不会继续阻塞，而是立即返回错误</li>
+</ul>
+<p><strong>第二步：返回可控的 fallback 结果</strong></p>
+<ul>
+<li>比如返回一个 “Order temporarily unavailable” 的业务错误</li>
+<li>前端可以提示用户稍后重试</li>
+</ul>
+<p><strong>第三步：自动重试机制</strong></p>
+<ul>
+<li>在半开状态下试探性发送请求</li>
+<li>一旦 Order Service 恢复，熔断器自动关闭</li>
+</ul>
+<p>这样即避免了整个系统被拖垮，又能在 Order Service 恢复后自动恢复流量。</p>
+</blockquote>
+<p>总结一句话：<br><strong>我们使用 Circuit Breaker + Timeout + Retry 的组合，确保系统在下游不可用时仍能保持稳定性和可恢复性。</strong></p>
+<blockquote>
+<p>为了避免 Order Service 的响应时间影响 RMS 的整体延迟，我们采用了两类优化手段：</p>
+<p><strong>① Timeout + Bulkhead（舱壁）隔离</strong></p>
+<ul>
+<li>给 Order Service 调用设置严格的超时（例如 300～500ms）</li>
+<li>采用线程池隔离，防止 Order Service 调用把 RMS 的线程耗尽</li>
+</ul>
+<p><strong>② 缓存（Redis）针对“不敏感数据”进行加速</strong><br>订单的关键状态不能缓存，但一些不影响实时性的内容可以缓存，例如：</p>
+<ul>
+<li>SKU 基础信息</li>
+<li>店铺&#x2F;仓库配置</li>
+<li>物流方式</li>
+<li>用户退货偏好</li>
+</ul>
+<p><strong>缓存策略</strong>：</p>
+<ul>
+<li>常用 TTL：5 分钟～30 分钟<br>（保证数据足够新，又能降低后端压力）</li>
+<li>Cache Aside 模式（最常见）<br>- 先查 Redis<br>- Redis miss 再查后端<br>- 查完写回 Redis</li>
+</ul>
+<p>对于极关键的实时数据（如 order status），我们不做缓存，而是保证同步调用 + 超时保护。</p>
+</blockquote>
+<p>总结一句话：<br><strong>敏感数据同步查，非敏感数据缓存；超时 + 隔离保证整体链路不会被拖慢。</strong></p>
+</li>
+</ol>
+<hr>
+<h2 id="🗃-3-数据库操作-一致性"><a href="#🗃-3-数据库操作-一致性" class="headerlink" title="🗃 3. 数据库操作 &amp; 一致性"></a><strong>🗃 3. 数据库操作 &amp; 一致性</strong></h2><ol>
+<li><strong>你说 RMS 会先创建 return record，然后再调用 Order Service。如果调用失败怎么办？回滚吗？补偿吗？</strong></li>
+<li><strong>你们使用本地事务还是分布式事务？如何避免分布式事务？</strong></li>
+<li><strong>重复提交 return request 如何避免？幂等性如何设计？用的什么幂等 key？</strong></li>
+</ol>
+<hr>
+<h2 id="🔐-4-业务判定逻辑"><a href="#🔐-4-业务判定逻辑" class="headerlink" title="🔐 4. 业务判定逻辑"></a><strong>🔐 4. 业务判定逻辑</strong></h2><ol>
+<li>**你提到根据订单状态判断是否退款 &amp; 是否需要寄回物品。你们如何处理边界情况？例如：</li>
+</ol>
+<ul>
+<li>用户提交退货 → 状态变成 shipped → 那时你们会怎么处理？**</li>
+</ul>
+<ol>
+<li><strong>Fraud Detection 的结果是同步拿还是异步？如果 Fraud Service 超时怎么办？</strong></li>
+</ol>
+<hr>
+<h2 id="🪵-5-Kafka-事件驱动"><a href="#🪵-5-Kafka-事件驱动" class="headerlink" title="🪵 5. Kafka 事件驱动"></a><strong>🪵 5. Kafka 事件驱动</strong></h2><ol>
+<li><strong>Kafka 消息是 exactly-once、at-least-once 还是 at-most-once？你们如何保证幂等？</strong></li>
+<li><strong>你们有遇到过消息积压吗？怎么定位 &amp; 解决？</strong></li>
+<li><strong>下游服务（Payment&#x2F;Delivery）收到重复事件会怎样？你们怎么保证不会重复退款？</strong></li>
+</ol>
+<hr>
+<h2 id="📦-6-异步任务-任务队列"><a href="#📦-6-异步任务-任务队列" class="headerlink" title="📦 6. 异步任务 &amp; 任务队列"></a><strong>📦 6. 异步任务 &amp; 任务队列</strong></h2><ol>
+<li>**你说你们会 enqueue async tasks；是什么实现？</li>
+</ol>
+<ul>
+<li>Java 内置线程池？</li>
+<li>Kafka？</li>
+<li>Redis Stream？</li>
+<li>或者是内部异步框架？**</li>
+</ul>
+<ol>
+<li><strong>为什么某些任务要异步执行？哪些任务必须同步？你如何划分？</strong></li>
+</ol>
+<hr>
+<h2 id="🌩-7-Kubernetes-相关"><a href="#🌩-7-Kubernetes-相关" class="headerlink" title="🌩 7. Kubernetes 相关"></a><strong>🌩 7. Kubernetes 相关</strong></h2><ol>
+<li><strong>你们的 RMS 部署在 Kubernetes 上，滚动更新期间如何保证零停机？使用了什么策略？</strong></li>
+<li><strong>RMS 需要存状态吗？是否无状态？为什么可以做到无状态？</strong></li>
+<li><strong>RMS 的 CPU &#x2F; Memory request &amp; limit 是如何决定的？</strong></li>
+</ol>
+<hr>
+<h2 id="🛡-8-安全性"><a href="#🛡-8-安全性" class="headerlink" title="🛡 8. 安全性"></a><strong>🛡 8. 安全性</strong></h2><ol>
+<li><strong>你们如何防止接口被频繁调用导致退款滥用？ API Gateway 的 rate limiting 是固定窗口还是 Token Bucket？</strong></li>
+<li><strong>Return API 需要验证用户是否真的拥有这个订单吗？验证流程是什么？</strong></li>
+</ol>
+<hr>
+<h2 id="📊-9-可观测性-故障分析"><a href="#📊-9-可观测性-故障分析" class="headerlink" title="📊 9. 可观测性 &amp; 故障分析"></a><strong>📊 9. 可观测性 &amp; 故障分析</strong></h2><ol>
+<li><strong>你们的链路追踪用的是 Zipkin, Jaeger 还是 OpenTelemetry？traceId 如何传递？</strong></li>
+<li><strong>一次请求超时，你们怎么排查？先看哪里？</strong></li>
+<li><strong>你们有 SLA 吗？p99 latency 大概是多少？瓶颈在哪？</strong></li>
+</ol>
+<hr>
+<h2 id="🧩-10-系统扩展性-可维护性"><a href="#🧩-10-系统扩展性-可维护性" class="headerlink" title="🧩 10. 系统扩展性 &amp; 可维护性"></a><strong>🧩 10. 系统扩展性 &amp; 可维护性</strong></h2><ol>
+<li><strong>返回逻辑未来可能加入更多规则，比如会员等级、促销活动、仓库限制——你们的决策引擎是否易扩展？如何设计？</strong></li>
+<li><strong>RMS 与 Fraud Service &#x2F; Order Service 的耦合度如何？有没有考虑事件化？</strong></li>
+</ol>
 
   </div>
   
@@ -2562,10 +2788,10 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateModified" datetime="2026-03-09T15:13:51-07:00">
+          <div class="new-meta-item date" itemprop="dateModified" datetime="2026-03-11T20:27:10-07:00">
   <a class='notlink'>
     <i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i>
-    <p>更新于：Mar 9, 2026</p>
+    <p>更新于：Mar 11, 2026</p>
   </a>
 </div>
 
@@ -2713,7 +2939,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
 
     <div class='content'>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick-Start"><span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create-a-new-post"><span class="toc-text">Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run-server"><span class="toc-text">Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate-static-files"><span class="toc-text">Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy-to-remote-sites"><span class="toc-text">Deploy to remote sites</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick-Start"><span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create-a-new-post"><span class="toc-text">Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run-server"><span class="toc-text">Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate-static-files"><span class="toc-text">Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy-to-remote-sites"><span class="toc-text">Deploy to remote sites</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8E%AF-1-%E5%85%B3%E4%BA%8E%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84"><span class="toc-text">🎯 1. 关于整体架构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%91-Load-Balancer%EF%BC%88Cloud-LB%EF%BC%89"><span class="toc-text">云 Load Balancer（Cloud LB）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Ingress-Controller"><span class="toc-text">Ingress Controller</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%A1-2-%E6%9C%8D%E5%8A%A1%E4%B9%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1-%E6%80%A7%E8%83%BD"><span class="toc-text">📡 2. 服务之间的通信 &amp; 性能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%97%83-3-%E6%95%B0%E6%8D%AE%E5%BA%93%E6%93%8D%E4%BD%9C-%E4%B8%80%E8%87%B4%E6%80%A7"><span class="toc-text">🗃 3. 数据库操作 &amp; 一致性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%94%90-4-%E4%B8%9A%E5%8A%A1%E5%88%A4%E5%AE%9A%E9%80%BB%E8%BE%91"><span class="toc-text">🔐 4. 业务判定逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%AA%B5-5-Kafka-%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8"><span class="toc-text">🪵 5. Kafka 事件驱动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%A6-6-%E5%BC%82%E6%AD%A5%E4%BB%BB%E5%8A%A1-%E4%BB%BB%E5%8A%A1%E9%98%9F%E5%88%97"><span class="toc-text">📦 6. 异步任务 &amp; 任务队列</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%8C%A9-7-Kubernetes-%E7%9B%B8%E5%85%B3"><span class="toc-text">🌩 7. Kubernetes 相关</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%9B%A1-8-%E5%AE%89%E5%85%A8%E6%80%A7"><span class="toc-text">🛡 8. 安全性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%93%8A-9-%E5%8F%AF%E8%A7%82%E6%B5%8B%E6%80%A7-%E6%95%85%E9%9A%9C%E5%88%86%E6%9E%90"><span class="toc-text">📊 9. 可观测性 &amp; 故障分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%F0%9F%A7%A9-10-%E7%B3%BB%E7%BB%9F%E6%89%A9%E5%B1%95%E6%80%A7-%E5%8F%AF%E7%BB%B4%E6%8A%A4%E6%80%A7"><span class="toc-text">🧩 10. 系统扩展性 &amp; 可维护性</span></a></li></ol>
     </div>
   </section>
 
@@ -3189,7 +3415,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
 
   <script>
-  let imgs = ["https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/035.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/005.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/056.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/006.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/038.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/016.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/019.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/034.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/052.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/039.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/042.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/012.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/033.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/054.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/003.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/046.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/051.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/004.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/002.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/025.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/001.webp"];
+  let imgs = ["https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/056.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/051.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/019.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/002.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/001.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/042.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/025.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/046.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/034.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/006.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/003.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/039.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/054.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/016.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/035.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/038.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/033.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/012.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/004.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/005.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/052.webp"];
   let index = 0;
   let IntervalParallax = null;
 
@@ -3418,7 +3644,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 </script>
 
 
-  <script type="application/ld+json">[{"@context":"http://schema.org","@type":"Organization","name":"Hexo","url":"http://example.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"http://schema.org","@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/","sameAs":["https://github.com/volantis-x"],"description":"xxx"},{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"http://example.com/","name":"Hexo"}},{"@type":"ListItem","position":3,"item":{"@id":"http://example.com/2024/01/01/hello-world/","name":"Hello World"}}]},{"@context":"http://schema.org","@type":"WebSite","name":"Hexo","url":"http://example.com/","keywords":null,"description":"xxx","author":{"@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/","description":"xxx"},"publisher":{"@type":"Organization","name":"Hexo","url":"http://example.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"http://example.com?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"http://schema.org","@type":"BlogPosting","headline":"Hello World","description":"xxx","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2024/01/01/hello-world/"},"author":{"@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"http://example.com/2024/01/01/hello-world/","wordCount":0,"datePublished":"2024-01-01T10:01:37.983Z","dateModified":"2026-03-09T22:13:51.594Z","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
+  <script type="application/ld+json">[{"@context":"http://schema.org","@type":"Organization","name":"Hexo","url":"http://example.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"http://schema.org","@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/","sameAs":["https://github.com/volantis-x"],"description":"xxx"},{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"http://example.com/","name":"Hexo"}},{"@type":"ListItem","position":3,"item":{"@id":"http://example.com/2024/01/01/hello-world/","name":"Hello World"}}]},{"@context":"http://schema.org","@type":"WebSite","name":"Hexo","url":"http://example.com/","keywords":null,"description":"xxx","author":{"@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/","description":"xxx"},"publisher":{"@type":"Organization","name":"Hexo","url":"http://example.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"http://example.com?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"http://schema.org","@type":"BlogPosting","headline":"Hello World","description":"xxx","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2024/01/01/hello-world/"},"author":{"@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"http://example.com/2024/01/01/hello-world/","wordCount":0,"datePublished":"2024-01-01T10:01:37.983Z","dateModified":"2026-03-12T03:27:10.921Z","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
 
 
 
