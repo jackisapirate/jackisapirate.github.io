@@ -6,7 +6,7 @@
   <meta charset="utf-8">
   <!-- SEO相关 -->
   
-  <link rel="canonical" href="http://example.com/2026/05/02/system design/"/>
+  <link rel="canonical" href="http://example.com/2026/05/10/bq针对简历/"/>
   <!-- 渲染优化 -->
     <meta http-equiv='x-dns-prefetch-control' content='on' />
       <link rel='dns-prefetch' href='https://unpkg.com'>
@@ -39,13 +39,13 @@
   
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/2026/05/02/System%20Design/index.html">
+<meta property="og:url" content="http://example.com/2026/05/10/BQ%E9%92%88%E5%AF%B9%E7%AE%80%E5%8E%86/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="[TOC] 1. API + 微服务基础 REST vs gRPC API Gateway Service registry (Eureka &#x2F; Consul) Load balancer（Nginx &#x2F; ELB） Circuit breaker（Resilience4j）  2. Caching Redis（cache-aside &#x2F; write-through &amp;">
+<meta property="og:description" content="第一轮问题（技术深挖版）Return Management System 项目1. 你们的 Return Management System 为什么要使用 Kafka？和 RabbitMQ 相比，你们是基于哪些考量做的选择??   in our Return Management System, the whole workflow is event-driven. For example, wh">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png">
-<meta property="article:published_time" content="2026-05-03T05:49:04.413Z">
-<meta property="article:modified_time" content="2026-05-03T06:25:22.127Z">
+<meta property="article:published_time" content="2026-05-11T01:04:36.637Z">
+<meta property="article:modified_time" content="2026-05-11T17:51:34.040Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png">
@@ -2425,7 +2425,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
           
 <div id="l_main" class=''>
   <article itemscope itemtype="http://schema.org/Article" class="article post white-box reveal md shadow floatable blur article-type-post" id="post" itemscope itemprop="blogPost">
-  <link itemprop="mainEntityOfPage" href="http://example.com/2026/05/02/System Design/">
+  <link itemprop="mainEntityOfPage" href="http://example.com/2026/05/10/BQ针对简历/">
   <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
     <meta itemprop="name" content="Hexo">
   </span>
@@ -2454,51 +2454,140 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
   <div id="layoutHelper-page-plugins"></div>
   <div id="post-body" itemprop="articleBody">
-    <p>[TOC]</p>
-<h2 id="1-API-微服务基础"><a href="#1-API-微服务基础" class="headerlink" title="1. API + 微服务基础"></a>1. <strong>API + 微服务基础</strong></h2><ul>
-<li>REST vs gRPC</li>
-<li>API Gateway</li>
-<li>Service registry (Eureka &#x2F; Consul)</li>
-<li>Load balancer（Nginx &#x2F; ELB）</li>
-<li>Circuit breaker（Resilience4j）</li>
+    <h1 id="第一轮问题（技术深挖版）Return-Management-System-项目"><a href="#第一轮问题（技术深挖版）Return-Management-System-项目" class="headerlink" title="第一轮问题（技术深挖版）Return Management System 项目"></a>第一轮问题（技术深挖版）Return Management System 项目</h1><h3 id="1-你们的-Return-Management-System-为什么要使用-Kafka？和-RabbitMQ-相比，你们是基于哪些考量做的选择"><a href="#1-你们的-Return-Management-System-为什么要使用-Kafka？和-RabbitMQ-相比，你们是基于哪些考量做的选择" class="headerlink" title="1. 你们的 Return Management System 为什么要使用 Kafka？和 RabbitMQ 相比，你们是基于哪些考量做的选择??"></a>1. 你们的 Return Management System 为什么要使用 Kafka？和 RabbitMQ 相比，你们是基于哪些考量做的选择??</h3><blockquote>
+</blockquote>
+<blockquote>
+<p>in our Return Management System, the whole workflow is event-driven. For example, when a customer submits a return, we create a refund event, and multiple downstream services need to consume that same event. So we needed something that can handle high throughput, scale easily, and support multiple consumers.</p>
+<p>We chose Kafka mainly for three reasons. First, Kafka gives us very high throughput — we process over a million events a day, and it handles that easily. Second, Kafka’s consumer group model makes it really simple to scale our services independently, and multiple services can consume the same event without duplicating work. Third, Kafka has built-in persistence and replay, so if a downstream service is down or slow, we don’t lose any data and it can catch up later.</p>
+<p>RabbitMQ is great for lightweight messaging, but it doesn’t handle large backlogs or horizontal scaling as well as Kafka. So for this project’s volume and event-driven architecture, Kafka was just a better fit.</p>
+</blockquote>
+<h2 id="①-Kafka-的-QPS、partition-数量是怎么决定的？为什么？"><a href="#①-Kafka-的-QPS、partition-数量是怎么决定的？为什么？" class="headerlink" title="① Kafka 的 QPS、partition 数量是怎么决定的？为什么？"></a><strong>① Kafka 的 QPS、partition 数量是怎么决定的？为什么？</strong></h2><ul>
+<li>“How many events per second were you processing?”</li>
 </ul>
-<h2 id="2-Caching"><a href="#2-Caching" class="headerlink" title="2. Caching"></a>2. <strong>Caching</strong></h2><ul>
-<li>Redis（cache-aside &#x2F; write-through &#x2F; write-back）</li>
-<li>分布式锁</li>
-<li>Session cache</li>
-<li>Cache eviction：LRU &#x2F; LFU &#x2F; TTL</li>
+<blockquote>
+<p>Sure. In our system we handle a bit over a million return or refund events per day, which roughly ends up being around 10–20 events per second during peak time. It’s not super high, but we still want enough room to grow.</p>
+<p>So when we designed our Kafka topics, we picked a partition count based mainly on two things:<br><strong>how much traffic we expect</strong>, and <strong>how many consumer instances we want to run in parallel</strong>. Since each partition can only be processed by one consumer at a time, the number of partitions basically decides our max parallelism.</p>
+<p>We started with a reasonable number of partitions — not too high, not too low — and increased them later when our traffic grew. Kafka makes adding partitions pretty straightforward.</p>
+<p>So overall, the partition strategy gave us enough throughput, and it let us scale individual consumers easily whenever one downstream service needed more capacity.</p>
+</blockquote>
+<h2 id="②-你们怎么保证-message-不会丢？怎么保证-exactly-once-或-at-least-once？"><a href="#②-你们怎么保证-message-不会丢？怎么保证-exactly-once-或-at-least-once？" class="headerlink" title="② 你们怎么保证 message 不会丢？怎么保证 exactly-once 或 at-least-once？"></a><strong>② 你们怎么保证 message 不会丢？怎么保证 exactly-once 或 at-least-once？</strong></h2><p>常见 follow-up：</p>
+<ul>
+<li>“What’s your acknowledgment strategy?”</li>
+<li>“Do you use idempotency keys?”</li>
+<li>“How do you handle retries?”</li>
 </ul>
-<h2 id="3-Database-设计"><a href="#3-Database-设计" class="headerlink" title="3. Database 设计"></a>3. <strong>Database 设计</strong></h2><ul>
-<li>SQL vs NoSQL</li>
-<li>Sharding &#x2F; Replication &#x2F; Indexing</li>
-<li>Read replicas</li>
-<li>CAP 思维</li>
-<li>分布式事务（2PC &#x2F; SAGA）</li>
+<blockquote>
+<p>In our system, we mainly design for <strong>at-least-once delivery</strong>, not strict exactly-once.</p>
+<p>Because in real-world systems, especially with Kafka, failures can happen between processing and committing offsets, so duplicates are always possible.</p>
+<p>To handle that, we make our services <strong>idempotent</strong>, so even if the same message is processed multiple times, it won’t create duplicate refunds or inconsistent states.</p>
+<p>For example, when processing a refund event, we use a unique identifier like returnId or transactionId, and we check the database before applying any update. If it has already been processed, we simply ignore it.</p>
+<p>On the producer side, Kafka also provides retry mechanisms and acknowledgments, like “acks &#x3D; all”, to reduce the chance of message loss.</p>
+<p>So overall:</p>
+<ul>
+<li>We ensure <strong>no message is lost</strong> using Kafka durability + acknowledgments</li>
+<li>We accept <strong>at-least-once delivery</strong></li>
+<li>And we achieve correctness through <strong>idempotent consumer logic</strong></li>
 </ul>
-<h2 id="4-Message-Queue"><a href="#4-Message-Queue" class="headerlink" title="4. Message Queue"></a>4. <strong>Message Queue</strong></h2><ul>
-<li>Kafka（你之前在 VISA 用过 → 优势点）</li>
-<li>Consumer group</li>
-<li>At-least-once &#x2F; exactly-once</li>
-<li>Backpressure</li>
+</blockquote>
+<h2 id="③-如果-downstream-服务宕机了，你们的系统怎么保证不会崩？"><a href="#③-如果-downstream-服务宕机了，你们的系统怎么保证不会崩？" class="headerlink" title="③ 如果 downstream 服务宕机了，你们的系统怎么保证不会崩？"></a><strong>③ 如果 downstream 服务宕机了，你们的系统怎么保证不会崩？</strong></h2><p>你要讲：</p>
+<ul>
+<li>Kafka backlog</li>
+<li>retry strategy</li>
+<li>consumer group catch-up</li>
+<li>dead-letter topic（如果有）</li>
 </ul>
-<h2 id="5-Scalability"><a href="#5-Scalability" class="headerlink" title="5. Scalability"></a>5. <strong>Scalability</strong></h2><ul>
-<li>horizontal scaling</li>
-<li>rate limiting</li>
-<li>throttling</li>
-<li>async processing</li>
+<blockquote>
+<p>If a downstream service goes down, our system doesn’t break because Kafka acts as a buffer.</p>
+<p>We don’t call downstream services synchronously. Instead, we publish events to Kafka first, and Kafka will safely store those events.</p>
+<p>So if the downstream service is down, it just stops consuming for a while. The messages will stay in Kafka as a backlog.</p>
+<p>Once the service comes back up, it can continue consuming from where it left off, so nothing is lost.</p>
+<p>In some cases, we also add retry logic or a dead-letter topic for messages that fail multiple times, so we can investigate them later.</p>
+<p>So overall, the system is designed to be resilient — Kafka decouples the services, and we rely on eventual consistency instead of blocking the whole workflow.</p>
+</blockquote>
+<p>你们retry多少次? 多长时间后定义为失败?</p>
+<blockquote>
+<p>We don’t have a fixed universal number, but in our system we usually retry around 3 to 5 times with exponential backoff.</p>
+<p>So for example, we might retry after 1 second, then 5 seconds, then 10 or 30 seconds depending on the failure.</p>
+<p>If the service still keeps failing after all retries, or it keeps failing for a few minutes continuously, we treat it as a downstream outage.</p>
+<p>At that point, instead of blocking the pipeline, we send the message to a dead-letter queue and rely on later replay or manual investigation.</p>
+<p>So basically, we combine retry + time window + DLQ to decide whether a service is temporarily unstable or really down.</p>
+</blockquote>
+<hr>
+<h2 id="④-你们怎么防止重复消费？如何保证幂等性？"><a href="#④-你们怎么防止重复消费？如何保证幂等性？" class="headerlink" title="④ 你们怎么防止重复消费？如何保证幂等性？"></a><strong>④ 你们怎么防止重复消费？如何保证幂等性？</strong></h2><p>面试官会说：</p>
+<blockquote>
+<p>“Kafka may deliver a message more than once.<br>How does your service avoid duplicate refund requests?”</p>
+</blockquote>
+<p>你要讲：</p>
+<ul>
+<li>idempotency key（基于 returnId 或 transactionId）</li>
+<li>DB unique index</li>
+<li>状态表（processed flag）</li>
 </ul>
-<h2 id="6-Storage"><a href="#6-Storage" class="headerlink" title="6. Storage"></a>6. <strong>Storage</strong></h2><ul>
-<li>Object storage (S3)</li>
-<li>CDN</li>
-<li>Blob storage</li>
-<li>File metadata DB</li>
+<blockquote>
+<p>In our system, we assume Kafka is <strong>at-least-once</strong>, so duplicate messages can happen. Because of that, we don’t try to “prevent duplicates completely” at the messaging layer. Instead, we make the consumer side <strong>idempotent</strong>.</p>
+<p>For example, in our refund flow, each event has a unique identifier like <code>returnId</code> . Before processing a message, we first check in the database whether this event has already been processed.</p>
+<p>If it has already been handled, we just skip it. If not, we proceed with the refund logic and then mark it as processed in the database.</p>
+<p>In some cases, we also use unique constraints at the DB level or an idempotency key table to make sure even if two messages arrive at the same time, only one will succeed.</p>
+<p>So overall, the idea is: we accept that duplicates can happen in Kafka, but we make the business logic safe so processing the same message multiple times won’t create any side effects.</p>
+</blockquote>
+<hr>
+<h2 id="⑤-你们的-refund-event-schema-是怎么设计的？有没有做-schema-evolution？"><a href="#⑤-你们的-refund-event-schema-是怎么设计的？有没有做-schema-evolution？" class="headerlink" title="⑤ 你们的 refund event schema 是怎么设计的？有没有做 schema evolution？"></a><strong>⑤ 你们的 refund event schema 是怎么设计的？有没有做 schema evolution？</strong></h2><p>如果你提到 event-driven，面试官会追问事件结构。</p>
+<p>可能的问题：</p>
+<ul>
+<li>“What fields are included?”</li>
+<li>“How do you maintain backward compatibility?”</li>
+<li>“Did you use Avro or JSON?”</li>
 </ul>
-<h2 id="7-监控-Observability"><a href="#7-监控-Observability" class="headerlink" title="7. 监控 &#x2F; Observability"></a>7. <strong>监控 &#x2F; Observability</strong></h2><ul>
-<li>Logging</li>
-<li>Metrics (Prometheus)</li>
-<li>Tracing (Jaeger)</li>
+<blockquote>
+<p>The refund event schema is basically the structure of the message we send through Kafka, not a database table. It defines what fields are included in the event, like refundId, returnId, amount, status, and timestamps.</p>
+<p>For schema evolution, we follow a backward-compatible approach. That means we can add new optional fields, but we avoid removing or changing existing ones in a breaking way.</p>
+<p>For example, if we later added a currency field, older consumers would just ignore it, and newer consumers can start using it without breaking existing services.</p>
+<p>In some cases, we also rely on versioning or default values to make sure old and new consumers can coexist safely.</p>
+<p>So the main idea is to keep the event schema flexible and backward compatible, so different services can evolve independently.</p>
+</blockquote>
+<hr>
+<h2 id="⑥-你们有没有用-message-ordering？怎么保证顺序？"><a href="#⑥-你们有没有用-message-ordering？怎么保证顺序？" class="headerlink" title="⑥ 你们有没有用 message ordering？怎么保证顺序？"></a><strong>⑥ 你们有没有用 message ordering？怎么保证顺序？</strong></h2><p>可能会问：</p>
+<ul>
+<li>“Do you need strict ordering per returnId?”</li>
+<li>“How do you handle ordering across partitions?”</li>
 </ul>
-
+<p>你可以回答：<br>同一个 returnId hash 到同一个 partition。</p>
+<blockquote>
+<p>Yes, we do care about ordering, but only at the <strong>business key level</strong>, not globally.</p>
+<p>In our return system, we need ordering per <code>returnId</code>. For example, all events related to the same return should be processed in sequence.</p>
+<p>To guarantee that, we use <code>returnId</code> as the Kafka partition key. Kafka will hash the key and always route messages with the same <code>returnId</code> to the same partition.</p>
+<p>Since Kafka guarantees ordering within a single partition, this ensures that all events for the same return are processed in order.</p>
+<p>Across different returnIds, we don’t guarantee ordering, because they go to different partitions — but that’s fine for our use case.</p>
+<p>So basically, we achieve ordering by controlling the partition key, not by trying to enforce global ordering.</p>
+</blockquote>
+<hr>
+<h2 id="⑦-你们用-Kafka-主要是-async，那某些流程需要-sync-response-怎么办？"><a href="#⑦-你们用-Kafka-主要是-async，那某些流程需要-sync-response-怎么办？" class="headerlink" title="⑦ 你们用 Kafka 主要是 async，那某些流程需要 sync response 怎么办？"></a><strong>⑦ 你们用 Kafka 主要是 async，那某些流程需要 sync response 怎么办？</strong></h2><p>考你系统设计能力。</p>
+<hr>
+<h2 id="⑧-你们有没有遇到过-consumer-lag？怎么监控？怎么解决？"><a href="#⑧-你们有没有遇到过-consumer-lag？怎么监控？怎么解决？" class="headerlink" title="⑧ 你们有没有遇到过 consumer lag？怎么监控？怎么解决？"></a><strong>⑧ 你们有没有遇到过 consumer lag？怎么监控？怎么解决？</strong></h2><p>你要讲：</p>
+<ul>
+<li>Open Observe</li>
+<li>consumer lag metrics</li>
+<li>加 partition &#x2F; 加实例</li>
+<li>性能调优（batch size、fetch.max.bytes）</li>
+</ul>
+<hr>
+<h2 id="⑨-你们的-retry-机制怎么设计？有没有-dead-letter-topic？"><a href="#⑨-你们的-retry-机制怎么设计？有没有-dead-letter-topic？" class="headerlink" title="⑨ 你们的 retry 机制怎么设计？有没有 dead-letter topic？"></a><strong>⑨ 你们的 retry 机制怎么设计？有没有 dead-letter topic？</strong></h2><p>很多公司一定会问。</p>
+<hr>
+<h2 id="⑩-如果-Kafka-整体宕机，你们系统怎么处理？有没有-fallback？"><a href="#⑩-如果-Kafka-整体宕机，你们系统怎么处理？有没有-fallback？" class="headerlink" title="⑩ 如果 Kafka 整体宕机，你们系统怎么处理？有没有 fallback？"></a><strong>⑩ 如果 Kafka 整体宕机，你们系统怎么处理？有没有 fallback？</strong></h2><p>视你公司实践而定。</p>
+<h3 id="2-你们的-Kafka-topic-是如何设计的？partition-数量、replication-factor-是怎么设置的？QPS-大概多少？有没有遇到-backpressure？"><a href="#2-你们的-Kafka-topic-是如何设计的？partition-数量、replication-factor-是怎么设置的？QPS-大概多少？有没有遇到-backpressure？" class="headerlink" title="2. 你们的 Kafka topic 是如何设计的？partition 数量、replication factor 是怎么设置的？QPS 大概多少？有没有遇到 backpressure？**"></a>2. 你们的 Kafka topic 是如何设计的？partition 数量、replication factor 是怎么设置的？QPS 大概多少？有没有遇到 backpressure？**</h3><hr>
+<h3 id="3-在-Return-workflow-中，event-driven-workflow-是怎么设计的？比如一个-refund-event-从产生到消费完整流程能讲一下吗？"><a href="#3-在-Return-workflow-中，event-driven-workflow-是怎么设计的？比如一个-refund-event-从产生到消费完整流程能讲一下吗？" class="headerlink" title="3. 在 Return workflow 中，event-driven workflow 是怎么设计的？比如一个 refund event 从产生到消费完整流程能讲一下吗？"></a><strong>3. 在 Return workflow 中，event-driven workflow 是怎么设计的？比如一个 refund event 从产生到消费完整流程能讲一下吗？</strong></h3><hr>
+<h3 id="4-你简历中提到了-Azure-SQL-Database，每天-100-万-transactions。你们怎么保证高吞吐？是否做了-connection-pool-优化、batch-write、index-调优？"><a href="#4-你简历中提到了-Azure-SQL-Database，每天-100-万-transactions。你们怎么保证高吞吐？是否做了-connection-pool-优化、batch-write、index-调优？" class="headerlink" title="4. 你简历中提到了 Azure SQL Database，每天 100 万+ transactions。你们怎么保证高吞吐？是否做了 connection pool 优化、batch write、index 调优？"></a><strong>4. 你简历中提到了 Azure SQL Database，每天 100 万+ transactions。你们怎么保证高吞吐？是否做了 connection pool 优化、batch write、index 调优？</strong></h3><hr>
+<h3 id="5-你们有没有使用-NoSQL-数据库？如果有的话在项目中负责什么？和-SQL-如何划分？"><a href="#5-你们有没有使用-NoSQL-数据库？如果有的话在项目中负责什么？和-SQL-如何划分？" class="headerlink" title="5. 你们有没有使用 NoSQL 数据库？如果有的话在项目中负责什么？和 SQL 如何划分？"></a><strong>5. 你们有没有使用 NoSQL 数据库？如果有的话在项目中负责什么？和 SQL 如何划分？</strong></h3><hr>
+<h3 id="6-你提到使用-Apache-Camel-做-routing-和-transformation，可以给我举一个具体使用场景吗？比如调用一个下游服务做-message-transformation-的流程？"><a href="#6-你提到使用-Apache-Camel-做-routing-和-transformation，可以给我举一个具体使用场景吗？比如调用一个下游服务做-message-transformation-的流程？" class="headerlink" title="6. 你提到使用 Apache Camel 做 routing 和 transformation，可以给我举一个具体使用场景吗？比如调用一个下游服务做 message transformation 的流程？"></a><strong>6. 你提到使用 Apache Camel 做 routing 和 transformation，可以给我举一个具体使用场景吗？比如调用一个下游服务做 message transformation 的流程？</strong></h3><hr>
+<h3 id="7-你说你提高了内部服务的-response-time，具体是怎么优化的？可以说一个你实际做过的-performance-bottleneck-和解决方案吗？"><a href="#7-你说你提高了内部服务的-response-time，具体是怎么优化的？可以说一个你实际做过的-performance-bottleneck-和解决方案吗？" class="headerlink" title="7. 你说你提高了内部服务的 response time，具体是怎么优化的？可以说一个你实际做过的 performance bottleneck 和解决方案吗？"></a><strong>7. 你说你提高了内部服务的 response time，具体是怎么优化的？可以说一个你实际做过的 performance bottleneck 和解决方案吗？</strong></h3><hr>
+<h3 id="8-Return-Management-System-是如何处理-retry、幂等性（idempotency）以及重复事件的？有使用-Redis、DB-Lock-或其他机制吗？"><a href="#8-Return-Management-System-是如何处理-retry、幂等性（idempotency）以及重复事件的？有使用-Redis、DB-Lock-或其他机制吗？" class="headerlink" title="8. Return Management System 是如何处理 retry、幂等性（idempotency）以及重复事件的？有使用 Redis、DB Lock 或其他机制吗？"></a><strong>8. Return Management System 是如何处理 retry、幂等性（idempotency）以及重复事件的？有使用 Redis、DB Lock 或其他机制吗？</strong></h3><hr>
+<h1 id="🔥-第二轮问题（测试、监控、运维）"><a href="#🔥-第二轮问题（测试、监控、运维）" class="headerlink" title="🔥 第二轮问题（测试、监控、运维）"></a>🔥 <strong>第二轮问题（测试、监控、运维）</strong></h1><h3 id="9-你们用-JUnit-Mockito-做单元测试，可以讲一个具体-case-吗？比如一个处理-refund-的-service-你们怎么-mock-dependencies？"><a href="#9-你们用-JUnit-Mockito-做单元测试，可以讲一个具体-case-吗？比如一个处理-refund-的-service-你们怎么-mock-dependencies？" class="headerlink" title="9. 你们用 JUnit + Mockito 做单元测试，可以讲一个具体 case 吗？比如一个处理 refund 的 service 你们怎么 mock dependencies？"></a><strong>9. 你们用 JUnit + Mockito 做单元测试，可以讲一个具体 case 吗？比如一个处理 refund 的 service 你们怎么 mock dependencies？</strong></h3><hr>
+<h3 id="10-Open-Observe-你用来做什么？可以举一个你排查生产问题的例子吗？"><a href="#10-Open-Observe-你用来做什么？可以举一个你排查生产问题的例子吗？" class="headerlink" title="10. Open Observe 你用来做什么？可以举一个你排查生产问题的例子吗？"></a><strong>10. Open Observe 你用来做什么？可以举一个你排查生产问题的例子吗？</strong></h3><hr>
+<h3 id="11-你参与过-on-call，能举一个-Sev2-或-Sev3-的-incident-吗？你当时怎么处理、用哪些工具、最终如何-fix？"><a href="#11-你参与过-on-call，能举一个-Sev2-或-Sev3-的-incident-吗？你当时怎么处理、用哪些工具、最终如何-fix？" class="headerlink" title="11. 你参与过 on-call，能举一个 Sev2 或 Sev3 的 incident 吗？你当时怎么处理、用哪些工具、最终如何 fix？"></a><strong>11. 你参与过 on-call，能举一个 Sev2 或 Sev3 的 incident 吗？你当时怎么处理、用哪些工具、最终如何 fix？</strong></h3><hr>
+<h1 id="🔥-第三轮问题（系统设计类）"><a href="#🔥-第三轮问题（系统设计类）" class="headerlink" title="🔥 第三轮问题（系统设计类）"></a>🔥 <strong>第三轮问题（系统设计类）</strong></h1><h3 id="12-设计一个-Return-Service，如果需要处理-5-倍的流量，你会怎么扩展系统架构？Kafka、SQL、服务层分别怎么扩展？"><a href="#12-设计一个-Return-Service，如果需要处理-5-倍的流量，你会怎么扩展系统架构？Kafka、SQL、服务层分别怎么扩展？" class="headerlink" title="12. 设计一个 Return Service，如果需要处理 5 倍的流量，你会怎么扩展系统架构？Kafka、SQL、服务层分别怎么扩展？"></a><strong>12. 设计一个 Return Service，如果需要处理 5 倍的流量，你会怎么扩展系统架构？Kafka、SQL、服务层分别怎么扩展？</strong></h3><hr>
+<h3 id="13-如果下游服务（例如-refund-service）宕机，你们的系统如何实现-graceful-degradation？消息是否会丢失？如何确保最终一致性？"><a href="#13-如果下游服务（例如-refund-service）宕机，你们的系统如何实现-graceful-degradation？消息是否会丢失？如何确保最终一致性？" class="headerlink" title="13. 如果下游服务（例如 refund service）宕机，你们的系统如何实现 graceful degradation？消息是否会丢失？如何确保最终一致性？"></a><strong>13. 如果下游服务（例如 refund service）宕机，你们的系统如何实现 graceful degradation？消息是否会丢失？如何确保最终一致性？</strong></h3><hr>
+<h1 id="🔥-第四轮问题（行为面）"><a href="#🔥-第四轮问题（行为面）" class="headerlink" title="🔥 第四轮问题（行为面）"></a>🔥 <strong>第四轮问题（行为面）</strong></h1><h3 id="14-在你开发-Return-Management-System-的过程中，你最有成就感的一项贡献是什么？为什么？"><a href="#14-在你开发-Return-Management-System-的过程中，你最有成就感的一项贡献是什么？为什么？" class="headerlink" title="14. 在你开发 Return Management System 的过程中，你最有成就感的一项贡献是什么？为什么？"></a><strong>14. 在你开发 Return Management System 的过程中，你最有成就感的一项贡献是什么？为什么？</strong></h3><hr>
+<h3 id="15-遇到团队沟通问题，你是怎么办的？有没有例子？"><a href="#15-遇到团队沟通问题，你是怎么办的？有没有例子？" class="headerlink" title="15. 遇到团队沟通问题，你是怎么办的？有没有例子？"></a><strong>15. 遇到团队沟通问题，你是怎么办的？有没有例子？</strong></h3>
   </div>
   
   
@@ -2522,10 +2611,10 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateModified" datetime="2026-05-02T23:25:22-07:00">
+          <div class="new-meta-item date" itemprop="dateModified" datetime="2026-05-11T10:51:34-07:00">
   <a class='notlink'>
     <i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i>
-    <p>更新于：May 2, 2026</p>
+    <p>更新于：May 11, 2026</p>
   </a>
 </div>
 
@@ -2544,7 +2633,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       
         <a class="-mob-share-qq" title="" rel="external nofollow noopener noreferrer noopener"
           
-          target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://example.com/2026/05/02/System%20Design/&title= - Hexo&summary="
+          target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://example.com/2026/05/10/BQ%E9%92%88%E5%AF%B9%E7%AE%80%E5%8E%86/&title= - Hexo&summary="
           
           >
           
@@ -2556,7 +2645,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       
         <a class="-mob-share-qzone" title="" rel="external nofollow noopener noreferrer noopener"
           
-          target="_blank" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://example.com/2026/05/02/System%20Design/&title= - Hexo&summary="
+          target="_blank" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://example.com/2026/05/10/BQ%E9%92%88%E5%AF%B9%E7%AE%80%E5%8E%86/&title= - Hexo&summary="
           
           >
           
@@ -2568,7 +2657,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       
         <a class="-mob-share-weibo" title="" rel="external nofollow noopener noreferrer noopener"
           
-          target="_blank" href="http://service.weibo.com/share/share.php?url=http://example.com/2026/05/02/System%20Design/&title= - Hexo&summary="
+          target="_blank" href="http://service.weibo.com/share/share.php?url=http://example.com/2026/05/10/BQ%E9%92%88%E5%AF%B9%E7%AE%80%E5%8E%86/&title= - Hexo&summary="
           
           >
           
@@ -2601,23 +2690,13 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   
     <div class="prev-next">
       
-        <a class='prev' href='/2026/05/05/questions/'>
-          <p class='title'><i class="fa-solid fa-chevron-left" aria-hidden="true"></i>May 2, 2026</p>
+      
+        <a class='next' href='/2026/05/05/questions/'>
+          <p class='title'>May 10, 2026<i class="fa-solid fa-chevron-right" aria-hidden="true"></i></p>
           <p class='content'>20260321
 20260323
 20260401
 How to find all elements in a HashMap123for (K key : map.keySet()) &#1...</p>
-        </a>
-      
-      
-        <a class='next' href='/2026/02/24/note/'>
-          <p class='title'>My Post<i class="fa-solid fa-chevron-right" aria-hidden="true"></i></p>
-          <p class='content'>[TOC]
-2024Text 1pull out 撤退
-curious a 珍贵的
-hoard n.v 储藏
-likely a 有可能的
-get their hands on 获得，（染指，字面...</p>
         </a>
       
     </div>
@@ -2633,7 +2712,7 @@ get their hands on 获得，（染指，字面...</p>
 
   <article class="post white-box shadow floatable blur" id="comments">
     <span hidden>
-      <meta itemprop="discussionUrl" content="/2026/05/02/System%20Design/index.html#comments">
+      <meta itemprop="discussionUrl" content="/2026/05/10/BQ%E9%92%88%E5%AF%B9%E7%AE%80%E5%8E%86/index.html#comments">
     </span>
     <p ct><i class='fa-solid fa-comments'></i> 评论</p>
     
@@ -2675,7 +2754,7 @@ get their hands on 获得，（染指，字面...</p>
 
 
     <div class='content'>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-API-%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%9F%BA%E7%A1%80"><span class="toc-text">1. API + 微服务基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Caching"><span class="toc-text">2. Caching</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Database-%E8%AE%BE%E8%AE%A1"><span class="toc-text">3. Database 设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Message-Queue"><span class="toc-text">4. Message Queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Scalability"><span class="toc-text">5. Scalability</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-Storage"><span class="toc-text">6. Storage</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E7%9B%91%E6%8E%A7-Observability"><span class="toc-text">7. 监控 &#x2F; Observability</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BD%A0%E4%BB%AC%E7%9A%84-Return-Management-System-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8-Kafka%EF%BC%9F%E5%92%8C-RabbitMQ-%E7%9B%B8%E6%AF%94%EF%BC%8C%E4%BD%A0%E4%BB%AC%E6%98%AF%E5%9F%BA%E4%BA%8E%E5%93%AA%E4%BA%9B%E8%80%83%E9%87%8F%E5%81%9A%E7%9A%84%E9%80%89%E6%8B%A9"><span class="toc-text">1. 你们的 Return Management System 为什么要使用 Kafka？和 RabbitMQ 相比，你们是基于哪些考量做的选择??</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A0-Kafka-%E7%9A%84-QPS%E3%80%81partition-%E6%95%B0%E9%87%8F%E6%98%AF%E6%80%8E%E4%B9%88%E5%86%B3%E5%AE%9A%E7%9A%84%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">① Kafka 的 QPS、partition 数量是怎么决定的？为什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A1-%E4%BD%A0%E4%BB%AC%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81-message-%E4%B8%8D%E4%BC%9A%E4%B8%A2%EF%BC%9F%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81-exactly-once-%E6%88%96-at-least-once%EF%BC%9F"><span class="toc-text">② 你们怎么保证 message 不会丢？怎么保证 exactly-once 或 at-least-once？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A2-%E5%A6%82%E6%9E%9C-downstream-%E6%9C%8D%E5%8A%A1%E5%AE%95%E6%9C%BA%E4%BA%86%EF%BC%8C%E4%BD%A0%E4%BB%AC%E7%9A%84%E7%B3%BB%E7%BB%9F%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E4%B8%8D%E4%BC%9A%E5%B4%A9%EF%BC%9F"><span class="toc-text">③ 如果 downstream 服务宕机了，你们的系统怎么保证不会崩？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A3-%E4%BD%A0%E4%BB%AC%E6%80%8E%E4%B9%88%E9%98%B2%E6%AD%A2%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9%EF%BC%9F%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E5%B9%82%E7%AD%89%E6%80%A7%EF%BC%9F"><span class="toc-text">④ 你们怎么防止重复消费？如何保证幂等性？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A4-%E4%BD%A0%E4%BB%AC%E7%9A%84-refund-event-schema-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F%E6%9C%89%E6%B2%A1%E6%9C%89%E5%81%9A-schema-evolution%EF%BC%9F"><span class="toc-text">⑤ 你们的 refund event schema 是怎么设计的？有没有做 schema evolution？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A5-%E4%BD%A0%E4%BB%AC%E6%9C%89%E6%B2%A1%E6%9C%89%E7%94%A8-message-ordering%EF%BC%9F%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E9%A1%BA%E5%BA%8F%EF%BC%9F"><span class="toc-text">⑥ 你们有没有用 message ordering？怎么保证顺序？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A6-%E4%BD%A0%E4%BB%AC%E7%94%A8-Kafka-%E4%B8%BB%E8%A6%81%E6%98%AF-async%EF%BC%8C%E9%82%A3%E6%9F%90%E4%BA%9B%E6%B5%81%E7%A8%8B%E9%9C%80%E8%A6%81-sync-response-%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F"><span class="toc-text">⑦ 你们用 Kafka 主要是 async，那某些流程需要 sync response 怎么办？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A7-%E4%BD%A0%E4%BB%AC%E6%9C%89%E6%B2%A1%E6%9C%89%E9%81%87%E5%88%B0%E8%BF%87-consumer-lag%EF%BC%9F%E6%80%8E%E4%B9%88%E7%9B%91%E6%8E%A7%EF%BC%9F%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3%EF%BC%9F"><span class="toc-text">⑧ 你们有没有遇到过 consumer lag？怎么监控？怎么解决？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A8-%E4%BD%A0%E4%BB%AC%E7%9A%84-retry-%E6%9C%BA%E5%88%B6%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1%EF%BC%9F%E6%9C%89%E6%B2%A1%E6%9C%89-dead-letter-topic%EF%BC%9F"><span class="toc-text">⑨ 你们的 retry 机制怎么设计？有没有 dead-letter topic？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A9-%E5%A6%82%E6%9E%9C-Kafka-%E6%95%B4%E4%BD%93%E5%AE%95%E6%9C%BA%EF%BC%8C%E4%BD%A0%E4%BB%AC%E7%B3%BB%E7%BB%9F%E6%80%8E%E4%B9%88%E5%A4%84%E7%90%86%EF%BC%9F%E6%9C%89%E6%B2%A1%E6%9C%89-fallback%EF%BC%9F"><span class="toc-text">⑩ 如果 Kafka 整体宕机，你们系统怎么处理？有没有 fallback？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BD%A0%E4%BB%AC%E7%9A%84-Kafka-topic-%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9Fpartition-%E6%95%B0%E9%87%8F%E3%80%81replication-factor-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%BE%E7%BD%AE%E7%9A%84%EF%BC%9FQPS-%E5%A4%A7%E6%A6%82%E5%A4%9A%E5%B0%91%EF%BC%9F%E6%9C%89%E6%B2%A1%E6%9C%89%E9%81%87%E5%88%B0-backpressure%EF%BC%9F"><span class="toc-text">2. 你们的 Kafka topic 是如何设计的？partition 数量、replication factor 是怎么设置的？QPS 大概多少？有没有遇到 backpressure？**</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%9C%A8-Return-workflow-%E4%B8%AD%EF%BC%8Cevent-driven-workflow-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F%E6%AF%94%E5%A6%82%E4%B8%80%E4%B8%AA-refund-event-%E4%BB%8E%E4%BA%A7%E7%94%9F%E5%88%B0%E6%B6%88%E8%B4%B9%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B%E8%83%BD%E8%AE%B2%E4%B8%80%E4%B8%8B%E5%90%97%EF%BC%9F"><span class="toc-text">3. 在 Return workflow 中，event-driven workflow 是怎么设计的？比如一个 refund event 从产生到消费完整流程能讲一下吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%BD%A0%E7%AE%80%E5%8E%86%E4%B8%AD%E6%8F%90%E5%88%B0%E4%BA%86-Azure-SQL-Database%EF%BC%8C%E6%AF%8F%E5%A4%A9-100-%E4%B8%87-transactions%E3%80%82%E4%BD%A0%E4%BB%AC%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E9%AB%98%E5%90%9E%E5%90%90%EF%BC%9F%E6%98%AF%E5%90%A6%E5%81%9A%E4%BA%86-connection-pool-%E4%BC%98%E5%8C%96%E3%80%81batch-write%E3%80%81index-%E8%B0%83%E4%BC%98%EF%BC%9F"><span class="toc-text">4. 你简历中提到了 Azure SQL Database，每天 100 万+ transactions。你们怎么保证高吞吐？是否做了 connection pool 优化、batch write、index 调优？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E4%BD%A0%E4%BB%AC%E6%9C%89%E6%B2%A1%E6%9C%89%E4%BD%BF%E7%94%A8-NoSQL-%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9F%E5%A6%82%E6%9E%9C%E6%9C%89%E7%9A%84%E8%AF%9D%E5%9C%A8%E9%A1%B9%E7%9B%AE%E4%B8%AD%E8%B4%9F%E8%B4%A3%E4%BB%80%E4%B9%88%EF%BC%9F%E5%92%8C-SQL-%E5%A6%82%E4%BD%95%E5%88%92%E5%88%86%EF%BC%9F"><span class="toc-text">5. 你们有没有使用 NoSQL 数据库？如果有的话在项目中负责什么？和 SQL 如何划分？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E4%BD%A0%E6%8F%90%E5%88%B0%E4%BD%BF%E7%94%A8-Apache-Camel-%E5%81%9A-routing-%E5%92%8C-transformation%EF%BC%8C%E5%8F%AF%E4%BB%A5%E7%BB%99%E6%88%91%E4%B8%BE%E4%B8%80%E4%B8%AA%E5%85%B7%E4%BD%93%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E5%90%97%EF%BC%9F%E6%AF%94%E5%A6%82%E8%B0%83%E7%94%A8%E4%B8%80%E4%B8%AA%E4%B8%8B%E6%B8%B8%E6%9C%8D%E5%8A%A1%E5%81%9A-message-transformation-%E7%9A%84%E6%B5%81%E7%A8%8B%EF%BC%9F"><span class="toc-text">6. 你提到使用 Apache Camel 做 routing 和 transformation，可以给我举一个具体使用场景吗？比如调用一个下游服务做 message transformation 的流程？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E4%BD%A0%E8%AF%B4%E4%BD%A0%E6%8F%90%E9%AB%98%E4%BA%86%E5%86%85%E9%83%A8%E6%9C%8D%E5%8A%A1%E7%9A%84-response-time%EF%BC%8C%E5%85%B7%E4%BD%93%E6%98%AF%E6%80%8E%E4%B9%88%E4%BC%98%E5%8C%96%E7%9A%84%EF%BC%9F%E5%8F%AF%E4%BB%A5%E8%AF%B4%E4%B8%80%E4%B8%AA%E4%BD%A0%E5%AE%9E%E9%99%85%E5%81%9A%E8%BF%87%E7%9A%84-performance-bottleneck-%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%E5%90%97%EF%BC%9F"><span class="toc-text">7. 你说你提高了内部服务的 response time，具体是怎么优化的？可以说一个你实际做过的 performance bottleneck 和解决方案吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-Return-Management-System-%E6%98%AF%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86-retry%E3%80%81%E5%B9%82%E7%AD%89%E6%80%A7%EF%BC%88idempotency%EF%BC%89%E4%BB%A5%E5%8F%8A%E9%87%8D%E5%A4%8D%E4%BA%8B%E4%BB%B6%E7%9A%84%EF%BC%9F%E6%9C%89%E4%BD%BF%E7%94%A8-Redis%E3%80%81DB-Lock-%E6%88%96%E5%85%B6%E4%BB%96%E6%9C%BA%E5%88%B6%E5%90%97%EF%BC%9F"><span class="toc-text">8. Return Management System 是如何处理 retry、幂等性（idempotency）以及重复事件的？有使用 Redis、DB Lock 或其他机制吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-%E4%BD%A0%E4%BB%AC%E7%94%A8-JUnit-Mockito-%E5%81%9A%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%EF%BC%8C%E5%8F%AF%E4%BB%A5%E8%AE%B2%E4%B8%80%E4%B8%AA%E5%85%B7%E4%BD%93-case-%E5%90%97%EF%BC%9F%E6%AF%94%E5%A6%82%E4%B8%80%E4%B8%AA%E5%A4%84%E7%90%86-refund-%E7%9A%84-service-%E4%BD%A0%E4%BB%AC%E6%80%8E%E4%B9%88-mock-dependencies%EF%BC%9F"><span class="toc-text">9. 你们用 JUnit + Mockito 做单元测试，可以讲一个具体 case 吗？比如一个处理 refund 的 service 你们怎么 mock dependencies？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-Open-Observe-%E4%BD%A0%E7%94%A8%E6%9D%A5%E5%81%9A%E4%BB%80%E4%B9%88%EF%BC%9F%E5%8F%AF%E4%BB%A5%E4%B8%BE%E4%B8%80%E4%B8%AA%E4%BD%A0%E6%8E%92%E6%9F%A5%E7%94%9F%E4%BA%A7%E9%97%AE%E9%A2%98%E7%9A%84%E4%BE%8B%E5%AD%90%E5%90%97%EF%BC%9F"><span class="toc-text">10. Open Observe 你用来做什么？可以举一个你排查生产问题的例子吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E4%BD%A0%E5%8F%82%E4%B8%8E%E8%BF%87-on-call%EF%BC%8C%E8%83%BD%E4%B8%BE%E4%B8%80%E4%B8%AA-Sev2-%E6%88%96-Sev3-%E7%9A%84-incident-%E5%90%97%EF%BC%9F%E4%BD%A0%E5%BD%93%E6%97%B6%E6%80%8E%E4%B9%88%E5%A4%84%E7%90%86%E3%80%81%E7%94%A8%E5%93%AA%E4%BA%9B%E5%B7%A5%E5%85%B7%E3%80%81%E6%9C%80%E7%BB%88%E5%A6%82%E4%BD%95-fix%EF%BC%9F"><span class="toc-text">11. 你参与过 on-call，能举一个 Sev2 或 Sev3 的 incident 吗？你当时怎么处理、用哪些工具、最终如何 fix？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA-Return-Service%EF%BC%8C%E5%A6%82%E6%9E%9C%E9%9C%80%E8%A6%81%E5%A4%84%E7%90%86-5-%E5%80%8D%E7%9A%84%E6%B5%81%E9%87%8F%EF%BC%8C%E4%BD%A0%E4%BC%9A%E6%80%8E%E4%B9%88%E6%89%A9%E5%B1%95%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%EF%BC%9FKafka%E3%80%81SQL%E3%80%81%E6%9C%8D%E5%8A%A1%E5%B1%82%E5%88%86%E5%88%AB%E6%80%8E%E4%B9%88%E6%89%A9%E5%B1%95%EF%BC%9F"><span class="toc-text">12. 设计一个 Return Service，如果需要处理 5 倍的流量，你会怎么扩展系统架构？Kafka、SQL、服务层分别怎么扩展？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-%E5%A6%82%E6%9E%9C%E4%B8%8B%E6%B8%B8%E6%9C%8D%E5%8A%A1%EF%BC%88%E4%BE%8B%E5%A6%82-refund-service%EF%BC%89%E5%AE%95%E6%9C%BA%EF%BC%8C%E4%BD%A0%E4%BB%AC%E7%9A%84%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0-graceful-degradation%EF%BC%9F%E6%B6%88%E6%81%AF%E6%98%AF%E5%90%A6%E4%BC%9A%E4%B8%A2%E5%A4%B1%EF%BC%9F%E5%A6%82%E4%BD%95%E7%A1%AE%E4%BF%9D%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F"><span class="toc-text">13. 如果下游服务（例如 refund service）宕机，你们的系统如何实现 graceful degradation？消息是否会丢失？如何确保最终一致性？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-%E5%9C%A8%E4%BD%A0%E5%BC%80%E5%8F%91-Return-Management-System-%E7%9A%84%E8%BF%87%E7%A8%8B%E4%B8%AD%EF%BC%8C%E4%BD%A0%E6%9C%80%E6%9C%89%E6%88%90%E5%B0%B1%E6%84%9F%E7%9A%84%E4%B8%80%E9%A1%B9%E8%B4%A1%E7%8C%AE%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">14. 在你开发 Return Management System 的过程中，你最有成就感的一项贡献是什么？为什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#15-%E9%81%87%E5%88%B0%E5%9B%A2%E9%98%9F%E6%B2%9F%E9%80%9A%E9%97%AE%E9%A2%98%EF%BC%8C%E4%BD%A0%E6%98%AF%E6%80%8E%E4%B9%88%E5%8A%9E%E7%9A%84%EF%BC%9F%E6%9C%89%E6%B2%A1%E6%9C%89%E4%BE%8B%E5%AD%90%EF%BC%9F"><span class="toc-text">15. 遇到团队沟通问题，你是怎么办的？有没有例子？</span></a></li></ol>
     </div>
   </section>
 
@@ -3380,7 +3459,7 @@ get their hands on 获得，（染指，字面...</p>
 </script>
 
 
-  <script type="application/ld+json">[{"@context":"http://schema.org","@type":"Organization","name":"Hexo","url":"http://example.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"http://schema.org","@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/","sameAs":["https://github.com/volantis-x"],"description":"xxx"},{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"http://example.com/","name":"Hexo"}},{"@type":"ListItem","position":3,"item":{"@id":"http://example.com/2026/05/02/System Design/"}}]},{"@context":"http://schema.org","@type":"WebSite","name":"Hexo","url":"http://example.com/","keywords":null,"description":"xxx","author":{"@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/","description":"xxx"},"publisher":{"@type":"Organization","name":"Hexo","url":"http://example.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"http://example.com?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"http://schema.org","@type":"BlogPosting","description":"xxx","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2026/05/02/System%20Design/"},"author":{"@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"http://example.com/2026/05/02/System%20Design/","wordCount":0,"datePublished":"2026-05-03T05:49:04.413Z","dateModified":"2026-05-03T06:25:22.127Z","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
+  <script type="application/ld+json">[{"@context":"http://schema.org","@type":"Organization","name":"Hexo","url":"http://example.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"http://schema.org","@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/","sameAs":["https://github.com/volantis-x"],"description":"xxx"},{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"http://example.com/","name":"Hexo"}},{"@type":"ListItem","position":3,"item":{"@id":"http://example.com/2026/05/10/BQ针对简历/"}}]},{"@context":"http://schema.org","@type":"WebSite","name":"Hexo","url":"http://example.com/","keywords":null,"description":"xxx","author":{"@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/","description":"xxx"},"publisher":{"@type":"Organization","name":"Hexo","url":"http://example.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"http://example.com?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"http://schema.org","@type":"BlogPosting","description":"xxx","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2026/05/10/BQ%E9%92%88%E5%AF%B9%E7%AE%80%E5%8E%86/"},"author":{"@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"http://example.com/2026/05/10/BQ%E9%92%88%E5%AF%B9%E7%AE%80%E5%8E%86/","wordCount":0,"datePublished":"2026-05-11T01:04:36.637Z","dateModified":"2026-05-11T17:51:34.040Z","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
 
 
 
