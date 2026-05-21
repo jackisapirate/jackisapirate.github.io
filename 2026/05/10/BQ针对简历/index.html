@@ -45,7 +45,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png">
 <meta property="article:published_time" content="2026-05-11T01:04:36.637Z">
-<meta property="article:modified_time" content="2026-05-15T03:33:59.320Z">
+<meta property="article:modified_time" content="2026-05-21T05:24:13.914Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png">
@@ -1596,7 +1596,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     debug: "env",
     cdn: {"js":{"app":"/js/app.js","parallax":"/js/plugins/parallax.js","rightMenu":"/js/plugins/rightMenu.js","rightMenus":"/js/plugins/rightMenus.js","sites":"/js/plugins/tags/sites.js","friends":"/js/plugins/tags/friends.js","contributors":"/js/plugins/tags/contributors.js","search":"/js/search/hexo.js"},"css":{"style":"/css/style.css"}},
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1778816139523),
+    lastupdate: new Date(1779341118721),
     sidebar: {
       for_page: ["blogger","category","tagcloud","webinfo","lastupdate","donate"],
       for_post: ["toc"],
@@ -2667,8 +2667,29 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 </ul>
 <p>This is realistic and common in financial systems.</p>
 </blockquote>
-<h3 id="2-你们的-Kafka-topic-是如何设计的？partition-数量、replication-factor-是怎么设置的？QPS-大概多少？有没有遇到-backpressure？"><a href="#2-你们的-Kafka-topic-是如何设计的？partition-数量、replication-factor-是怎么设置的？QPS-大概多少？有没有遇到-backpressure？" class="headerlink" title="2. 你们的 Kafka topic 是如何设计的？partition 数量、replication factor 是怎么设置的？QPS 大概多少？有没有遇到 backpressure？"></a>2. 你们的 Kafka topic 是如何设计的？partition 数量、replication factor 是怎么设置的？QPS 大概多少？有没有遇到 backpressure？</h3><hr>
-<h3 id="3-在-Return-workflow-中，event-driven-workflow-是怎么设计的？比如一个-refund-event-从产生到消费完整流程能讲一下吗？"><a href="#3-在-Return-workflow-中，event-driven-workflow-是怎么设计的？比如一个-refund-event-从产生到消费完整流程能讲一下吗？" class="headerlink" title="3. 在 Return workflow 中，event-driven workflow 是怎么设计的？比如一个 refund event 从产生到消费完整流程能讲一下吗？"></a>3. 在 Return workflow 中，event-driven workflow 是怎么设计的？比如一个 refund event 从产生到消费完整流程能讲一下吗？</h3><hr>
+<h3 id="2-你们的-Kafka-topic-是如何设计的？partition-数量、replication-factor-是怎么设置的？QPS-大概多少？有没有遇到-backpressure？"><a href="#2-你们的-Kafka-topic-是如何设计的？partition-数量、replication-factor-是怎么设置的？QPS-大概多少？有没有遇到-backpressure？" class="headerlink" title="2. 你们的 Kafka topic 是如何设计的？partition 数量、replication factor 是怎么设置的？QPS 大概多少？有没有遇到 backpressure？"></a>2. 你们的 Kafka topic 是如何设计的？partition 数量、replication factor 是怎么设置的？QPS 大概多少？有没有遇到 backpressure？</h3><blockquote>
+<p>Sure — in our project we used Kafka pretty heavily, mainly for event streaming between services and for buffering high-throughput write workloads.</p>
+<p><strong>Topic Design</strong><br>We designed topics around clear business domains — for example, <code>returns.created</code>, <code>inventory.updated</code>, and <code>order.status.changed</code>.<br>Each topic only carried one event type so the consumers stayed simple.</p>
+<p><strong>Partitions &amp; Throughput</strong><br>For our hot topics, like <code>returns.created</code>, we configured <strong>12 partitions</strong>.<br>We started with 6 but doubled it when the traffic grew because we needed more parallelism on the consumer side.<br>Our typical throughput was around <strong>8k–12k messages per second</strong> depending on peak hours.</p>
+<p><strong>Replication Factor</strong><br>We used <strong>replication factor &#x3D; 3</strong>, which is pretty standard.<br>It gives you good durability and allows Kafka to tolerate a broker failure without losing availability.</p>
+<p><strong>Backpressure &amp; Consumer Lag</strong><br>Yes, we did run into backpressure in a few scenarios — usually when downstream services slowed down or the database had spikes.<br>We handled it in a few ways:</p>
+<ol>
+<li><strong>Horizontal scaling</strong> — we added more consumer instances so each partition had a dedicated consumer.</li>
+<li><strong>Batch consumption</strong> — instead of processing one message at a time, consumers processed in small batches to reduce DB I&#x2F;O.</li>
+<li><strong>Dead letter queue</strong> — slow or malformed events were diverted instead of blocking the main consumer loop.</li>
+<li><strong>Autoscaling</strong> — we scaled consumers based on lag metrics so we reacted automatically when traffic spiked.</li>
+</ol>
+<p>Overall, our system was stable even under heavy load because Kafka gave us enough buffering capacity and the consumer side was able to scale horizontally.</p>
+</blockquote>
+<hr>
+<h3 id="3-在-Return-workflow-中，event-driven-workflow-是怎么设计的？比如一个-refund-event-从产生到消费完整流程能讲一下吗？"><a href="#3-在-Return-workflow-中，event-driven-workflow-是怎么设计的？比如一个-refund-event-从产生到消费完整流程能讲一下吗？" class="headerlink" title="3. 在 Return workflow 中，event-driven workflow 是怎么设计的？比如一个 refund event 从产生到消费完整流程能讲一下吗？"></a>3. 在 Return workflow 中，event-driven workflow 是怎么设计的？比如一个 refund event 从产生到消费完整流程能讲一下吗？</h3><blockquote>
+<p>Sure — in our return workflow everything is event-driven, so a refund basically flows through a series of events.<br>When a customer submits a return request, our service first validates it and writes the return record into Azure SQL. Right after that, we publish a <strong>ReturnCreated</strong> event to Kafka. That’s like the trigger for the whole refund pipeline.</p>
+<p>Our <strong>Refund Orchestrator</strong> service consumes that event and decides what should happen next — for example, check inventory rules, verify payment method, or calculate the exact refund amount. After each step, it publishes another event, like <strong>RefundCalculated</strong> or <strong>RefundApproved</strong>, so downstream services don’t call each other directly — they just react to events.</p>
+<p>Once the refund is approved, we publish a <strong>RefundRequested</strong> event. Our <strong>Payment Service</strong> listens to that topic. It handles the actual payment refund with the payment provider, and when the provider confirms success, it emits a <strong>RefundCompleted</strong> event.</p>
+<p>Finally, another consumer updates the return status in SQL, logs everything for auditing, and triggers user notifications.</p>
+<p>So the idea is:<br><strong>each step is small, decoupled, and asynchronous</strong>.<br>Events drive the workflow, and every service only needs to care about the events it consumes and produces.</p>
+</blockquote>
+<hr>
 <h3 id="4-你简历中提到了-Azure-SQL-Database，每天-100-万-transactions。你们怎么保证高吞吐？是否做了-connection-pool-优化、batch-write、index-调优？"><a href="#4-你简历中提到了-Azure-SQL-Database，每天-100-万-transactions。你们怎么保证高吞吐？是否做了-connection-pool-优化、batch-write、index-调优？" class="headerlink" title="4. 你简历中提到了 Azure SQL Database，每天 100 万+ transactions。你们怎么保证高吞吐？是否做了 connection pool 优化、batch write、index 调优？"></a>4. 你简历中提到了 Azure SQL Database，每天 100 万+ transactions。你们怎么保证高吞吐？是否做了 connection pool 优化、batch write、index 调优？</h3><blockquote>
 <p>Sure — in my previous project we were handling <strong>over a million transactions per day</strong> on <strong>Azure SQL Database</strong>, so keeping the throughput high was a big focus for us.</p>
 <p>First, on the application side, we made sure to use a <strong>proper connection pool</strong>. We tuned the pool size based on our peak load tests, so the app didn’t spend time repeatedly opening and closing connections — which is pretty expensive for SQL Server.</p>
@@ -2693,6 +2714,31 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 <p>Because of this variability, we stored all product-related information in MongoDB. It gave us the flexibility to handle different schemas without constantly changing the database structure.</p>
 <p>On the other hand, we used Azure SQL Database for the core return workflow, such as return requests, return status, and transaction records, where we needed strong consistency and relational integrity.</p>
 <p>So basically, we separated the responsibilities:<br>SQL for transactional and consistent data, and MongoDB for flexible product attribute data.</p>
+</blockquote>
+<p>追问 <strong>SQL + NoSQL 的划分 &amp; 你负责的内容</strong></p>
+<blockquote>
+<p>Sure — in our project we actually used both a relational database, <strong>Azure SQL</strong>, and a non-relational database, <strong>MongoDB</strong>.</p>
+<p>Azure SQL was mainly used for all the <em>structured</em> and <em>transactional</em> parts of the system — things like return orders, workflow states, audits, payment status, basically anything that required strong consistency and relational constraints.</p>
+<p>But for the product-related data, we used <strong>MongoDB</strong>.<br>The reason is that different product types had very different sets of fields. Some had size and color, others had serial numbers, others had expiration dates… the schema wasn’t stable. So putting that into a relational table would have led to dozens of nullable columns or complicated join tables. MongoDB handled that flexible schema much better.</p>
+<p>In this design, my role was:</p>
+<ul>
+<li>modeling the JSON documents in MongoDB</li>
+<li>building the queries for retrieving product attributes</li>
+<li>designing how our return service combines SQL data (the return itself) with NoSQL data (the product attributes)</li>
+<li>and making sure we only put <em>transactional</em> or <em>relational</em> logic into Azure SQL, while the <em>dynamic product metadata</em> stayed in MongoDB.</li>
+</ul>
+<p>So the separation was pretty clean:<br><strong>SQL &#x3D; structured, transactional, consistent.</strong><br><strong>NoSQL &#x3D; flexible, schema-light product attributes.</strong></p>
+</blockquote>
+<p>追问能否举例说明 什么数据存在relational database 什么数据存储在non relational database？</p>
+<blockquote>
+<p>Because different product categories have totally different fields.<br>For example, a phone has CPU, storage, screen size…<br>but a pair of shoes has completely different attributes like size, material, and gender.</p>
+<p>If we store this in a relational table, we either get</p>
+<ul>
+<li>a <strong>very wide table</strong> with tons of nullable columns<br>or</li>
+<li><strong>many small tables</strong>, causing complex joins.</li>
+</ul>
+<p>MongoDB’s flexible schema solves this perfectly.</p>
+<p>We store structured, transactional data in Azure SQL — such as orders, users, and return workflows — because they require strong consistency.And we store product attributes in MongoDB, because different product categories have completely different fields, and a flexible schema fits much better.</p>
 </blockquote>
 <hr>
 <h3 id="6-你提到使用-Apache-Camel-做-routing-和-transformation，可以给我举一个具体使用场景吗？比如调用一个下游服务做-message-transformation-的流程？"><a href="#6-你提到使用-Apache-Camel-做-routing-和-transformation，可以给我举一个具体使用场景吗？比如调用一个下游服务做-message-transformation-的流程？" class="headerlink" title="6. 你提到使用 Apache Camel 做 routing 和 transformation，可以给我举一个具体使用场景吗？比如调用一个下游服务做 message transformation 的流程？"></a><strong>6. 你提到使用 Apache Camel 做 routing 和 transformation，可以给我举一个具体使用场景吗？比如调用一个下游服务做 message transformation 的流程？</strong></h3><hr>
@@ -2728,10 +2774,10 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateModified" datetime="2026-05-14T20:33:59-07:00">
+          <div class="new-meta-item date" itemprop="dateModified" datetime="2026-05-20T22:24:13-07:00">
   <a class='notlink'>
     <i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i>
-    <p>更新于：May 14, 2026</p>
+    <p>更新于：May 20, 2026</p>
   </a>
 </div>
 
@@ -3347,7 +3393,7 @@ How to find all elements in a HashMap123for (K key : map.keySet()) &#1...</p>
 
 
   <script>
-  let imgs = ["https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/051.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/035.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/001.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/052.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/016.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/046.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/056.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/002.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/033.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/034.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/012.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/003.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/004.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/019.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/038.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/005.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/042.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/054.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/025.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/039.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/006.webp"];
+  let imgs = ["https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/002.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/025.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/039.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/046.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/006.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/001.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/016.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/038.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/052.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/033.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/035.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/019.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/042.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/034.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/004.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/012.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/005.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/056.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/051.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/003.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/054.webp"];
   let index = 0;
   let IntervalParallax = null;
 
@@ -3576,7 +3622,7 @@ How to find all elements in a HashMap123for (K key : map.keySet()) &#1...</p>
 </script>
 
 
-  <script type="application/ld+json">[{"@context":"http://schema.org","@type":"Organization","name":"Hexo","url":"http://example.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"http://schema.org","@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/","sameAs":["https://github.com/volantis-x"],"description":"xxx"},{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"http://example.com/","name":"Hexo"}},{"@type":"ListItem","position":3,"item":{"@id":"http://example.com/2026/05/10/BQ针对简历/"}}]},{"@context":"http://schema.org","@type":"WebSite","name":"Hexo","url":"http://example.com/","keywords":null,"description":"xxx","author":{"@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/","description":"xxx"},"publisher":{"@type":"Organization","name":"Hexo","url":"http://example.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"http://example.com?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"http://schema.org","@type":"BlogPosting","description":"xxx","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2026/05/10/BQ%E9%92%88%E5%AF%B9%E7%AE%80%E5%8E%86/"},"author":{"@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"http://example.com/2026/05/10/BQ%E9%92%88%E5%AF%B9%E7%AE%80%E5%8E%86/","wordCount":0,"datePublished":"2026-05-11T01:04:36.637Z","dateModified":"2026-05-15T03:33:59.320Z","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
+  <script type="application/ld+json">[{"@context":"http://schema.org","@type":"Organization","name":"Hexo","url":"http://example.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"http://schema.org","@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/","sameAs":["https://github.com/volantis-x"],"description":"xxx"},{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"http://example.com/","name":"Hexo"}},{"@type":"ListItem","position":3,"item":{"@id":"http://example.com/2026/05/10/BQ针对简历/"}}]},{"@context":"http://schema.org","@type":"WebSite","name":"Hexo","url":"http://example.com/","keywords":null,"description":"xxx","author":{"@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/","description":"xxx"},"publisher":{"@type":"Organization","name":"Hexo","url":"http://example.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"http://example.com?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"http://schema.org","@type":"BlogPosting","description":"xxx","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2026/05/10/BQ%E9%92%88%E5%AF%B9%E7%AE%80%E5%8E%86/"},"author":{"@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"http://example.com/2026/05/10/BQ%E9%92%88%E5%AF%B9%E7%AE%80%E5%8E%86/","wordCount":0,"datePublished":"2026-05-11T01:04:36.637Z","dateModified":"2026-05-21T05:24:13.914Z","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
 
 
 
