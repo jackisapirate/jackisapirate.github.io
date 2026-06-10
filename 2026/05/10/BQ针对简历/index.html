@@ -45,7 +45,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png">
 <meta property="article:published_time" content="2026-05-11T01:04:36.637Z">
-<meta property="article:modified_time" content="2026-05-21T05:24:13.914Z">
+<meta property="article:modified_time" content="2026-06-10T07:21:41.075Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png">
@@ -1596,7 +1596,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     debug: "env",
     cdn: {"js":{"app":"/js/app.js","parallax":"/js/plugins/parallax.js","rightMenu":"/js/plugins/rightMenu.js","rightMenus":"/js/plugins/rightMenus.js","sites":"/js/plugins/tags/sites.js","friends":"/js/plugins/tags/friends.js","contributors":"/js/plugins/tags/contributors.js","search":"/js/search/hexo.js"},"css":{"style":"/css/style.css"}},
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1779341118721),
+    lastupdate: new Date(1781107188326),
     sidebar: {
       for_page: ["blogger","category","tagcloud","webinfo","lastupdate","donate"],
       for_post: ["toc"],
@@ -2479,7 +2479,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 <blockquote>
 <p>In our system, we mainly design for <strong>at-least-once delivery</strong>, not strict exactly-once.</p>
 <p>Because in real-world systems, especially with Kafka, failures can happen between processing and committing offsets, so duplicates are always possible.</p>
-<p>To handle that, we make our services <strong>idempotent</strong>, so even if the same message is processed multiple times, it won’t create duplicate refunds or inconsistent states.</p>
+<p>To handle that, we make our services <strong>idempotent</strong>, so even if the same message is processed multiple times, it won’t create duplicate refunds or inconsistent <strong>states</strong>.</p>
 <p>For example, when processing a refund event, we use a unique identifier like eventId, returnId, and we check the database before applying any update. If it has already been processed, we simply ignore it.</p>
 <p>On the producer side, Kafka also provides retry mechanisms and acknowledgments, like “acks &#x3D; all”, to reduce the chance of message loss.</p>
 <p>So overall:</p>
@@ -2750,7 +2750,682 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 <h1 id="🔥-第三轮问题（系统设计类）"><a href="#🔥-第三轮问题（系统设计类）" class="headerlink" title="🔥 第三轮问题（系统设计类）"></a>🔥 <strong>第三轮问题（系统设计类）</strong></h1><h3 id="12-设计一个-Return-Service，如果需要处理-5-倍的流量，你会怎么扩展系统架构？Kafka、SQL、服务层分别怎么扩展？"><a href="#12-设计一个-Return-Service，如果需要处理-5-倍的流量，你会怎么扩展系统架构？Kafka、SQL、服务层分别怎么扩展？" class="headerlink" title="12. 设计一个 Return Service，如果需要处理 5 倍的流量，你会怎么扩展系统架构？Kafka、SQL、服务层分别怎么扩展？"></a><strong>12. 设计一个 Return Service，如果需要处理 5 倍的流量，你会怎么扩展系统架构？Kafka、SQL、服务层分别怎么扩展？</strong></h3><hr>
 <h3 id="13-如果下游服务（例如-refund-service）宕机，你们的系统如何实现-graceful-degradation？消息是否会丢失？如何确保最终一致性？"><a href="#13-如果下游服务（例如-refund-service）宕机，你们的系统如何实现-graceful-degradation？消息是否会丢失？如何确保最终一致性？" class="headerlink" title="13. 如果下游服务（例如 refund service）宕机，你们的系统如何实现 graceful degradation？消息是否会丢失？如何确保最终一致性？"></a><strong>13. 如果下游服务（例如 refund service）宕机，你们的系统如何实现 graceful degradation？消息是否会丢失？如何确保最终一致性？</strong></h3><hr>
 <h1 id="🔥-第四轮问题（行为面）"><a href="#🔥-第四轮问题（行为面）" class="headerlink" title="🔥 第四轮问题（行为面）"></a>🔥 <strong>第四轮问题（行为面）</strong></h1><h3 id="14-在你开发-Return-Management-System-的过程中，你最有成就感的一项贡献是什么？为什么？"><a href="#14-在你开发-Return-Management-System-的过程中，你最有成就感的一项贡献是什么？为什么？" class="headerlink" title="14. 在你开发 Return Management System 的过程中，你最有成就感的一项贡献是什么？为什么？"></a><strong>14. 在你开发 Return Management System 的过程中，你最有成就感的一项贡献是什么？为什么？</strong></h3><hr>
-<h3 id="15-遇到团队沟通问题，你是怎么办的？有没有例子？"><a href="#15-遇到团队沟通问题，你是怎么办的？有没有例子？" class="headerlink" title="15. 遇到团队沟通问题，你是怎么办的？有没有例子？"></a><strong>15. 遇到团队沟通问题，你是怎么办的？有没有例子？</strong></h3>
+<h3 id="15-遇到团队沟通问题，你是怎么办的？有没有例子？"><a href="#15-遇到团队沟通问题，你是怎么办的？有没有例子？" class="headerlink" title="15. 遇到团队沟通问题，你是怎么办的？有没有例子？"></a><strong>15. 遇到团队沟通问题，你是怎么办的？有没有例子？</strong></h3><p>以下问题为八股</p>
+<h3 id="Can-you-talk-about-CI-CD"><a href="#Can-you-talk-about-CI-CD" class="headerlink" title="Can you talk about CI&#x2F;CD?"></a>Can you talk about CI&#x2F;CD?</h3><blockquote>
+<ol>
+<li>CICD is continuous integration and continuous deployment. In the project, we usually use Jenkins with its pipeline scripts to implement CICD.</li>
+<li>The script contains multiple parts. The ‘stages’ part lists each stage along with its corresponding steps. For example, stage one is ‘checkout.’ The steps in this stage include using git clone to check out the code from the repository and then using Maven to package it. Another part of the script is “post” part which handles different result. For example, how to handle the build success or failure, and what to do when the test cases failed.</li>
+<li>CICD usually starts from when the code is pushed to the target branch, and then it includes checkout and package the code, deploy the jar&#x2F;war, run the test cases and send reports etc. It could cover from dev to QA&#x2F;Staging environment, but usually does not cover production.</li>
+</ol>
+</blockquote>
+<h3 id="How-to-use-docker-in-the-Spring-Boot"><a href="#How-to-use-docker-in-the-Spring-Boot" class="headerlink" title="How to use docker in the Spring Boot?"></a>How to use docker in the Spring Boot?</h3><blockquote>
+<p>Docker is a container with flexible memory management and has dockerHub that you can upload or download images</p>
+<p>To use with Spring boot, 1) include docker dependency 2) add a Dockerfile</p>
+<p>We package the Spring Boot application as a JAR, create a Docker image using a Dockerfile, and run it inside a container. We usually externalize configuration through environment variables and deploy the same image across different environments. Docker helps ensure consistency and makes deployment easier. In some cases, we also use Kubernetes to manage and scale the containers.</p>
+<p>1</p>
+<p>项目中docker 和 k8s和我们spring boot项目的关系</p>
+<p>We package our Spring Boot application into a JAR file and then build a Docker image using a Dockerfile.</p>
+<p>The Docker image is pushed to our container registry.</p>
+<p>Kubernetes then pulls the image and deploys it as pods.</p>
+<p>Kubernetes handles scaling, health checks, and rolling deployments, while Docker is used for packaging the application.</p>
+</blockquote>
+<h3 id="ElasticSearch-why-do-you-use-it"><a href="#ElasticSearch-why-do-you-use-it" class="headerlink" title="ElasticSearch why do you use it"></a>ElasticSearch why do you use it</h3><blockquote>
+<p>Elastic Search is an engine to make search data very faster. It is usually put between backend application and database, it works like a cache or a database. Some people think it is a databse, but it is actually defined to only optimize search.</p>
+<p>ElasticSearch use index to cache out all the fields you want to search, just like the database Non-Cluster Index.</p>
+</blockquote>
+<h3 id="Git-command-you-used-in-the-project"><a href="#Git-command-you-used-in-the-project" class="headerlink" title="Git command you used in the project"></a>Git command you used in the project</h3><blockquote>
+<ul>
+<li>git config, git init</li>
+<li>Clone from repository as new project: <strong>git clone</strong> URL</li>
+<li>Steps to commit change to remote repository: <strong>git add</strong> (files), <strong>git commit</strong> (-m message), <strong>git push</strong></li>
+<li>get remote data: <strong>git pull</strong> or <strong>git fetch</strong> (git fetch just read remote repository, git pull is git fetch + merge to current local branch)</li>
+<li>rebase and merge: <strong>git rebase</strong>, <strong>git merge</strong></li>
+<li>create a branch: <strong>git checkout</strong> branchName</li>
+<li>delete a branch: <strong>git branch</strong> -d branchName</li>
+<li>to override current branch with remote: <strong>git reset</strong> –hard remoteHead</li>
+</ul>
+</blockquote>
+<h3 id="difference-git-merge-and-rebase"><a href="#difference-git-merge-and-rebase" class="headerlink" title="difference git merge and rebase"></a>difference git merge and rebase</h3><blockquote>
+<p>Suppose you have 2 branches: f1 and f2 both derived from main branch and both have some commits. now you are on f1 and you want the commits from f2.</p>
+<p>Merge: combine all commits from f1 and f2 as a new commit and put on f1. so merge will create a new commit.</p>
+<p>Rebase: your f1 is based on main, rebase is to let your f1 branch based on f2. it will make f2 as the new base for f1.</p>
+<p>In Git, the rebase command<br>integrates changes from one branch into another, rewriting the commit history<br>to create a linear succession of commits</p>
+</blockquote>
+<h3 id="Abstract-class-vs-Interface-When-to-use-abstract-class-and-when-to-use-interface"><a href="#Abstract-class-vs-Interface-When-to-use-abstract-class-and-when-to-use-interface" class="headerlink" title="Abstract class vs. Interface. When to use abstract class and when to use interface?"></a>Abstract class vs. Interface. When to use abstract class and when to use interface?</h3><blockquote>
+<p>Abstract Class: 1) still a class, so you can only extend one abstract class. 2) Have both concrete method and abstract method.</p>
+<p>Interface: 1) you can implement many interfaces 2) Only has abstract method. 3) In java 8, interface can have default and static method</p>
+<p>Usage:</p>
+<p>Most of the places, interfaces are preferred, but if you need some common method to inherit automatically, you can use abstract class.</p>
+<p>FOLLOW UP:</p>
+<p>since java 8 allows default and static method in interface, what is the essential difference between abstract class and interface?</p>
+<p>A: abstract class can have fields, the fields can hold value and track the status of the object itself. Interface cannot have fields, it can only have constants.</p>
+</blockquote>
+<h3 id="🔥New-feature-of-Java-8-Give-an-example-of-how-you-use-them-in-your-project"><a href="#🔥New-feature-of-Java-8-Give-an-example-of-how-you-use-them-in-your-project" class="headerlink" title="🔥New feature of Java 8. Give an example of how you use them in your project"></a>🔥New feature of Java 8. Give an example of how you use them in your project</h3><blockquote>
+<ul>
+<li>Functional interface: is an interface that only has ONE abstract method. We can use lambda expression to implement that method</li>
+<li>Lambda expression: () -&gt; {}. It is to implement functional interface and anonymous class. You can pass a lambda function to a method as argument</li>
+<li>Optional: to prevent NullPointerException in runtime. for example, Optional<Employee>, it has methods like isPresent(), isEmpty(), get(), orElse() etc.</li>
+<li>Default method in interface:</li>
+<li>Why need it: When a interface has 10 children classes, all children classes need the same method, before java 8, you need to implement this same method in every child class, but with default method, you just write it once as default method in interface, all children will automatically inherit it.</li>
+<li>If a class implements 2 interfaces and both interfaces has same “default” method, then there will be exception because the class does not know which on to use, the class then has to override them.</li>
+<li>Stream API: a group of methods to handle collections easily. like, filter, map, flatmap, sorted, reduce, groupingBy, joining etc.</li>
+<li>Intermediate operator vs terminator operator</li>
+<li>flatmap vs map</li>
+<li>Java Date Time API update: new date time API has default timezone, so developer does not need to set it.</li>
+</ul>
+<p>|</p>
+<p>Intermediate operator:</p>
+<ul>
+<li>refer to operators that return another stream which can be appended by another operator. like stream().map(), the map is an intermediate operator because we can chain it with more operations.</li>
+<li>Example: filter, map, sorted</li>
+</ul>
+<p>Terminal operator:</p>
+<ul>
+<li><p>refer to final operators in stream api. We cannot append more operations after terminal operator.</p>
+</li>
+<li><p>Example: forEach, collect, count, findAny</p>
+</li>
+</ul>
+<p> FlatMap is Map + Flat. It can handle 2 dimensional matrix, and apply Map on each row and then Flat each row result into a final 1 dimensional array.</p>
+</blockquote>
+<h3 id="Types-of-Exceptions-and-how-do-you-deal-with-exceptions-in-your-project"><a href="#Types-of-Exceptions-and-how-do-you-deal-with-exceptions-in-your-project" class="headerlink" title="Types of Exceptions and how do you deal with exceptions in your project?"></a>Types of Exceptions and how do you deal with exceptions in your project?</h3><blockquote>
+<ul>
+<li>Java Exception hierarchy:</li>
+</ul>
+<p>throwable – error + exception.</p>
+<p>error is like system error which can NOT be handled by program, like OutOfMemoryError, StackOverflowError etc.</p>
+<p>Exception – compile&#x2F;checked exception + runtime&#x2F;unchecked exception. Checked exception can be handled using try catch block, like the SQLException, Thread InterrupttedException; Unchecked exception happens in runtime, like NullPointerException, IndexOutOfBoundException etc.</p>
+<ul>
+<li>self defined exception: Just extend the java Exception class and define your own constructor and message</li>
+<li>How to deal with exception</li>
+<li>Java: use Try&#x2F;Catch&#x2F;Finally block or use Throws on method level.</li>
+<li>Spring: use @ExceptionHandler @ControllerAdvice on the controller level to catch exception in whole application</li>
+</ul>
+</blockquote>
+<h3 id="Generics-and-how-do-you-use-generics-in-your-project"><a href="#Generics-and-how-do-you-use-generics-in-your-project" class="headerlink" title="Generics and how do you use generics in your project?"></a>Generics and how do you use generics in your project?</h3><blockquote>
+<p>Generics is used to prevent the error when converting data from one type to another type or just to make a method work for multiple type of data.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;public V getFirstElement(List&lt;T&gt; list) &#123;</span><br><span class="line">   return list.isEmpty() ? null : list.get(0);</span><br><span class="line">&gt;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Usually T is used to present Type and V is used to represent Value.</p>
+<p>With generics, we can 1) make sure the type is safe at compile time. 2) make a method or class work for different type of data.</p>
+</blockquote>
+<h3 id="Java-OOP-4-principles-and-explain-each-of-them"><a href="#Java-OOP-4-principles-and-explain-each-of-them" class="headerlink" title="Java OOP 4 principles, and explain each of them"></a>Java OOP 4 principles, and explain each of them</h3><blockquote>
+<p>PIEA:</p>
+<p><strong>Polymorphism</strong>: 2 types, static polymorphism&#x2F;overload and dynamic polymorphism&#x2F;override. overload is you have 2 methods in the same class, they have SAME method name but different type or numbers of parameters . They can have different access modifier too (they are basically just 2 different methods happening to have the same name).</p>
+<p>Override: 2 methods with same method signature(method name, parameters) in Parent and Child class, but different implementations. The child method must have same or broader access modifier than parent method.</p>
+<p><strong>Inheritance</strong>: One class can only inherit one parent class, one class can implement many interfaces</p>
+<p><strong>Encapsulation</strong>: This is about who can access your method or fields, Access modifer: Public, Private, Protected, Default.</p>
+<p><strong>Abstraction</strong>: abstract class and interfaces.</p>
+</blockquote>
+<h3 id="If-java-8-allows-default-method-in-interface-so-what-is-the-real-difference-between-interface-and-abstract-class"><a href="#If-java-8-allows-default-method-in-interface-so-what-is-the-real-difference-between-interface-and-abstract-class" class="headerlink" title="If java 8 allows default method in interface, so what is the real difference between interface and abstract class?"></a>If java 8 allows default method in interface, so what is the real difference between interface and abstract class?</h3><blockquote>
+<p>abstract class can have regular fields which can host the data, but interface cannot, interface can only have constants.</p>
+</blockquote>
+<h3 id="Serialization-What-is-Serializable-and-SerialVersionUID"><a href="#Serialization-What-is-Serializable-and-SerialVersionUID" class="headerlink" title="Serialization, What is Serializable and SerialVersionUID?"></a>Serialization, What is Serializable and SerialVersionUID?</h3><blockquote>
+<p>Serialization is to convert the java object into <strong>byte stream</strong> so you can save it to file system or database or send across network.</p>
+<p>To implement serialization, just implement serializable interface. In Java serialization, only instance variables are serialized. Static variables are not part of the object state; they belong to the class, so they are not serialized. Access modifiers like public or private do not affect serialization. Additionally, transient fields are explicitly excluded from serialization.</p>
+<p>When a “serialVersionUID” is presented, it is used to match the byte stream with current java class, if they match, the byte steam can be de-serialized, otherwise, exception (<strong>InvalidClassException</strong>) will be thrown.</p>
+</blockquote>
+<h3 id="HashMap-how-does-it-work-internally-what-is-hash-collision"><a href="#HashMap-how-does-it-work-internally-what-is-hash-collision" class="headerlink" title="HashMap: how does it work internally, what is hash collision"></a>HashMap: how does it work internally, what is hash collision</h3><blockquote>
+<p>HashMap has 2  important methods, equals() and hashcode()</p>
+<p>Think there is a list of buckets, each bucket is identified by a hashcode.</p>
+<p>When you call get(key), the key will first be passed to hashcode() method and a hashcode is returned, Use this hashcode, you can locate the corresponding bucket. Inside that bucket, it is a tree structure of all key-value pairs that share the same hashcode. so to find the target key-value pair, the equals() method will be called, and once found, the value will be returned.</p>
+<p>Hash collision: all the key-value pair that shares the same hashcode stays in same bucket, that is called hash collision. It is preferred in hashmap, because if there is NO hash collsion, each key-value pair will stay in one bucket, then there will be too many buckets, causing too much memory. If all entries in one bucket, then it is hard to search the target. The hash collision makes the time complexity of hashmap to O(1) because of hashing.</p>
+<p>Why hashmap use Tree structure in bucket: Previously it is a list, but then changed to tree, because tree has left node smaller than root and root smaller than right. So the search is O(logn), much faster than list.</p>
+<h3 id="为什么equals-和-hashcode的返回值必须一致"><a href="#为什么equals-和-hashcode的返回值必须一致" class="headerlink" title="为什么equals 和 hashcode的返回值必须一致"></a>为什么equals 和 hashcode的返回值必须一致</h3><p>In Java, the contract between equals and hashCode requires that if two objects are equal according to equals(), they must have the same hashCode.<br>This is because hash-based collections like HashMap and HashSet first use hashCode to locate the bucket and then use equals to find the exact match.<br>If this rule is violated, logically equal objects may be stored in different buckets, leading to incorrect retrieval behavior.</p>
+</blockquote>
+<h3 id="What-is-the-Functional-Interface-Java-8-built-in-functional-interface"><a href="#What-is-the-Functional-Interface-Java-8-built-in-functional-interface" class="headerlink" title="What is the Functional Interface? Java 8 built in functional interface?"></a>What is the Functional Interface? Java 8 built in functional interface?</h3><blockquote>
+<p>Function interface is in java 8, it can only contain Single Abstract Method. You can use lambda to implement it.</p>
+<p>Java built-in function interface:</p>
+<p><strong>Consumer</strong>: the method takes input but NO output. Example: System.out.println(input)</p>
+<p><strong>Supplier</strong>: the method takes NO input but HAS output. Example: RandomNumberGenerator.</p>
+<p><strong>Predicate</strong>!: the method return boolean type, true or false, it is widely used in stream().filter(predicate) to filter out collections</p>
+<p><strong>Function</strong>: the method takes INPUT and RETURN output. it is used to convert data, like stream().map(function)</p>
+<p>Binary Operator: the method has 2 input and 1 same type output: like int add(int a, int b)</p>
+<p>there are other types, but you only need to anser, the top 4.</p>
+</blockquote>
+<h2 id="Implement-a-singleton"><a href="#Implement-a-singleton" class="headerlink" title="Implement a singleton"></a>Implement a singleton</h2><blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&gt;<span class="keyword">import</span> java.io.Serializable;</span><br><span class="line">&gt;<span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton</span> <span class="keyword">implements</span> <span class="title class_">Cloneable</span>, Serializable &#123;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line">   <span class="keyword">private</span> <span class="title function_">Singleton</span><span class="params">()</span> &#123;&#125;</span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">       <span class="keyword">if</span> (instance == <span class="literal">null</span>) &#123;</span><br><span class="line">           <span class="keyword">synchronized</span> (Singleton.class) &#123;</span><br><span class="line">               <span class="keyword">if</span> (instance == <span class="literal">null</span>) &#123;</span><br><span class="line">                   instance = <span class="keyword">new</span> <span class="title class_">Singleton</span>();</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> instance;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="keyword">protected</span> Object <span class="title function_">clone</span><span class="params">()</span> <span class="keyword">throws</span> CloneNotSupportedException &#123;</span><br><span class="line">       <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">CloneNotSupportedException</span>(<span class="string">&quot;Cloning of Singleton is not allowed.&quot;</span>);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">protected</span> Object <span class="title function_">readResolve</span><span class="params">()</span> &#123;</span><br><span class="line">       <span class="keyword">return</span> getInstance();</span><br><span class="line">   &#125;</span><br><span class="line">&gt;&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="why-2-if-statement-double-check"><a href="#why-2-if-statement-double-check" class="headerlink" title="why 2 if statement double check?"></a>why 2 if statement double check?</h3><p>The outer if (instance &#x3D;&#x3D; null) check ensures that we only synchronize when necessary (i.e., when the instance is not yet created).</p>
+<p>The synchronized (Singleton.class) block provides thread safety by ensuring that only one thread at a time can execute the critical section inside it.</p>
+<p>The inner if (instance &#x3D;&#x3D; null) check is necessary because multiple threads might have passed the outer check and are waiting to enter the synchronized block.</p>
+<p>Without the inner check, two threads could potentially create two instances concurrently.</p>
+</blockquote>
+<h3 id="Do-you-know-about-the-Executor-Service-and-Future"><a href="#Do-you-know-about-the-Executor-Service-and-Future" class="headerlink" title="Do you know about the Executor Service and Future?"></a>Do you know about the Executor Service and Future?</h3><blockquote>
+<p>Executor Service has thread pool. It can be used run multi threads in parallel.</p>
+<p>Thread Pool:</p>
+<ul>
+<li><strong>Fixed Thread Pool:</strong> create fixed number of threads no matter you will use it or not</li>
+<li><strong>Cached Thread Pool</strong>: create threads based on needs, if new task is coming and no threads available, it will create new thread. If a thread idle for some time, it will be <strong>terminated</strong>.</li>
+<li><strong>Scheduled Thread Pool</strong>: can be used to set delays and schedule tasks</li>
+<li><strong>Fork Join Pool</strong>: It uses a <strong>work-stealing algorithm</strong>, the tasks are break into many small pieces. If some threads are done with their tasks, they can steal other threads task to run. This will have better performance.</li>
+</ul>
+<p>When the task has return (callable tasks)</p>
+<p>Use <strong>Future</strong> object to host the return. The tasks are like async process, they are submitted, and later on, if there is a return comes back, the return will be stored in Future object.</p>
+<p>Future has method like get() to get result or isDone() to check if task is completed.</p>
+</blockquote>
+<h3 id="Explain-the-Factory-design-pattern"><a href="#Explain-the-Factory-design-pattern" class="headerlink" title="Explain the Factory design pattern"></a>Explain the Factory design pattern</h3><blockquote>
+<p>A factory is a method that if you pass an input, it can return the corresponding objects:</p>
+<p>REAL PROJECT Example:</p>
+<ol>
+<li>Credit card payment, if enter “MasterCard”, will return mastercard payment object, if enter “Visa”, will return visa payment etc.</li>
+<li>Database Connection, if pass in “oracle”, will return oracle connection object, if pass “mysql”, will return mysql payment object.</li>
+</ol>
+<p>Example:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">&gt;<span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">DatabaseConnection</span> &#123;</span><br><span class="line">   <span class="keyword">void</span> <span class="title function_">connect</span><span class="params">()</span>;</span><br><span class="line">&gt;&#125;</span><br><span class="line">&gt;<span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MySqlConnection</span> <span class="keyword">implements</span> <span class="title class_">DatabaseConnection</span> &#123;</span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">connect</span><span class="params">()</span> &#123;</span><br><span class="line">       <span class="comment">// Implementation details for connecting to MySQL</span></span><br><span class="line">   &#125;</span><br><span class="line">&gt;&#125;</span><br><span class="line"></span><br><span class="line">&gt;<span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PostgreSqlConnection</span> <span class="keyword">implements</span> <span class="title class_">DatabaseConnection</span> &#123;</span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">connect</span><span class="params">()</span> &#123;</span><br><span class="line">       <span class="comment">// Implementation details for connecting to PostgreSQL</span></span><br><span class="line">   &#125;</span><br><span class="line">&gt;&#125;</span><br><span class="line">&gt;<span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DatabaseConnectionFactory</span> &#123;</span><br><span class="line">   <span class="comment">//driver method takes dbType and will get the corresponding type</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">static</span> DatabaseConnection <span class="title function_">createDatabaseConnection</span><span class="params">(String dbType)</span> &#123;</span><br><span class="line">       <span class="keyword">if</span> (dbType.equalsIgnoreCase(<span class="string">&quot;MySQL&quot;</span>)) &#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">MySqlConnection</span>();</span><br><span class="line">       &#125; <span class="keyword">else</span> <span class="keyword">if</span> (dbType.equalsIgnoreCase(<span class="string">&quot;PostgreSQL&quot;</span>)) &#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">PostgreSqlConnection</span>();</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="comment">// Handle other database types or throw an exception for unknown types</span></span><br><span class="line">       <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Unsupported database type: &quot;</span> + dbType);</span><br><span class="line">   &#125;</span><br><span class="line">&gt;&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="What-design-patterns-did-you-worked-on-before"><a href="#What-design-patterns-did-you-worked-on-before" class="headerlink" title="What design patterns did you worked on before?"></a>What design patterns did you worked on before?</h3><blockquote>
+<p>Singleton, Factory, Observer parttern, Builder pattern</p>
+</blockquote>
+<h3 id="How-to-customize-an-Exception"><a href="#How-to-customize-an-Exception" class="headerlink" title="How to customize an Exception?"></a>How to customize an Exception?</h3><blockquote>
+<p>Just extend the “Exception” class</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CustomException</span> <span class="keyword">extends</span> <span class="title class_">Exception</span> &#123;</span><br><span class="line">    </span><br><span class="line">    String message;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">CustomException</span><span class="params">(String message)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(message);</span><br><span class="line">        <span class="comment">//other logic if needed.</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="What-is-Optional"><a href="#What-is-Optional" class="headerlink" title="What is Optional?"></a>What is Optional?</h3><blockquote>
+<p>Optional is introduced in java 8, to prevent null pointer exception.</p>
+<p>For example, if you have employee.getAddress().getCity(), in runtime, if employee is null, getAddress() will throw exception.</p>
+<p>Wen can use Optional<Employee>, optional has method like ifPresent(), isPresent(), get(), orElse() etc.</p>
+</blockquote>
+<h3 id="ArrayList-vs-LinkedList-which-one-to-choose"><a href="#ArrayList-vs-LinkedList-which-one-to-choose" class="headerlink" title="ArrayList vs LinkedList, which one to choose?"></a>ArrayList vs LinkedList, which one to choose?</h3><blockquote>
+<p>Structural: Arraylist has index and get(index) method. LinkedList: has only header and next pointer.</p>
+<p>For TIME complexity,</p>
+<p>if you know the index of target element in arraylist, arraylist is best O(1), if you dont know index, arraylist and linkedlist are the same O(n)</p>
+<p>For Space complexity,</p>
+<p>ADD element ArrayList is O(n) because you have to shift all elements after. But linkedlist is O(1) because you just change the pointer.</p>
+</blockquote>
+<h3 id="Java-8-Intermediate-operator-and-terminal-operator-in-stream-api"><a href="#Java-8-Intermediate-operator-and-terminal-operator-in-stream-api" class="headerlink" title="Java 8: Intermediate operator and terminal operator in stream api"></a>Java 8: Intermediate operator and terminal operator in stream api</h3><blockquote>
+<p>Intermediate operator:</p>
+<ul>
+<li>refer to operators that return another stream which can be appended by another operator. like stream().map(), the map is an intermediate operator because we can chain it with more operations.</li>
+<li>Example: filter, map, sorted</li>
+</ul>
+<p>Terminal operator:</p>
+<ul>
+<li>refer to final operators in stream api. We cannot append more operations after terminal operator.</li>
+<li>Example: forEach, collect, count, findAny</li>
+</ul>
+</blockquote>
+<h3 id="How-do-you-create-a-thread"><a href="#How-do-you-create-a-thread" class="headerlink" title="How do you create a thread?"></a>How do you create a thread?</h3><blockquote>
+<p>There are 2 ways: extend the Thread class or Implement the Runnable interface</p>
+</blockquote>
+<h3 id="How-does-thread-communicate-interact-share-data-with-each-other"><a href="#How-does-thread-communicate-interact-share-data-with-each-other" class="headerlink" title="How does thread communicate&#x2F;interact&#x2F;share data with each other?"></a>How does thread communicate&#x2F;interact&#x2F;share data with each other?</h3><blockquote>
+<p>Communicate&#x2F;Interact:</p>
+<ol>
+<li>Wait() and Notify() method: wait() method will let current thread pause and release lock to other threads, this current thread will only be waken up and get lock if other threads call notify() or notifyAll().</li>
+<li>Executor service in java concurrent package can interact threads, like the WorkStealingPool use join and fork to interact between threads to improve performance. CompletableFuture also can chain threads.</li>
+</ol>
+<p>If asking how to share data between threads:</p>
+<ol>
+<li>Let threads visit same data memory, like same object, same database table, same file or cache</li>
+<li>Use message queues. one thread sending data, another thread consume data</li>
+</ol>
+</blockquote>
+<h3 id="What-are-the-meaning-of-thread-methods-join-wait-sleep-yield"><a href="#What-are-the-meaning-of-thread-methods-join-wait-sleep-yield" class="headerlink" title="What are the meaning of thread methods: join, wait, sleep, yield"></a>What are the meaning of thread methods: join, wait, sleep, yield</h3><blockquote>
+<p>JOIN: makes the current thread wait until another thread finishes execution. So it is used to let threads run in order.</p>
+<p>WAIT: wait is to <strong>RELEASE lock</strong> and enter a waiting state. and let other threads run. this thread will resume only when other threads call notify(), notifyAll()</p>
+<p>SLEEP: this thread will NOT RELEASE the lock, it lets current thread to sleep for given time and then it will restart by itself. Different from wait method, the sleep will not release lock and will resume by itself.</p>
+<p>YIELD: suggests the current thread to pause and allow other threads to execute, but it is only a hint to the scheduler and not guaranteed.</p>
+</blockquote>
+<h3 id="How-does-ConcurrentHashMap-works"><a href="#How-does-ConcurrentHashMap-works" class="headerlink" title="How does ConcurrentHashMap works?"></a>How does ConcurrentHashMap works?</h3><blockquote>
+<p>ConcurrentHashMap is thread safe and it has better performance then SynchornizedMap</p>
+<p>ConcurrentHashMap divides its internal buckets into 16 segments. When 1 thread visits the map, it will lock that segement, and the other threads can still visit other segments.</p>
+<p>The SyncrhonziedMap will lock the entire map, so its performance is not as good as ConcurrentHashMap</p>
+</blockquote>
+<h3 id="What-is-ConcurrentModificationException-and-how-to-handle-it"><a href="#What-is-ConcurrentModificationException-and-how-to-handle-it" class="headerlink" title="What is ConcurrentModificationException and how to handle it?"></a>What is ConcurrentModificationException and how to handle it?</h3><blockquote>
+<p>ConcurrentModificationException is thrown when you have multiple threads try to modify the NON-thread-safe java collections, like ArrayList, HashSet, HashMap etc.</p>
+<p>To handle:</p>
+<ol>
+<li>When modify collection, like remove element, using Iterator instead of for loop.</li>
+<li>Use thread safe collection, like CopyOnWriteArrayList, ConcurrentHashMap, CopyOnWriteHashSet etc.</li>
+</ol>
+</blockquote>
+<h3 id="Relationship-between-equals-and-hashcode"><a href="#Relationship-between-equals-and-hashcode" class="headerlink" title="Relationship between equals() and hashcode()"></a>Relationship between equals() and hashcode()</h3><blockquote>
+<p>In HashMap, when you do a get(key) call, first key is passed to hashcode() to locate a bucket, and then inside bucket, call equals() to find the entry.</p>
+<p>HashCode() and Equals() should use exactly the same object fields.</p>
+<ol>
+<li>If two objects are equal according to the <code>equals()</code> method, they must have the same hash code (equal objects must produce equal hash codes).</li>
+<li>However, the reverse is not necessarily true: two objects with the same hash code may or may not be equal.</li>
+</ol>
+</blockquote>
+<h3 id="How-to-make-class-immutable"><a href="#How-to-make-class-immutable" class="headerlink" title="How to make class immutable?"></a>How to make class immutable?</h3><blockquote>
+<p>Immutable means it cannot be changed. So we should prevent all ways to change a class and its object</p>
+<ul>
+<li>make class final, public final class ..so we cannot extend and modify it</li>
+<li>make fields private, so we cannot modify it directly from outside</li>
+<li>Do NOT provide setter method.</li>
+<li>in the get method, don’t return fields directly, return copy of the fields.</li>
+</ul>
+</blockquote>
+<h3 id="What-is-the-deadlock-How-to-FIND-it-How-to-avoid-it"><a href="#What-is-the-deadlock-How-to-FIND-it-How-to-avoid-it" class="headerlink" title="What is the deadlock? How to FIND it? How to avoid it?"></a>What is the deadlock? How to FIND it? How to avoid it?</h3><blockquote>
+<p>Deadlock is when you have 2 threads, Thread1 is waiting Thread2 to release lock on an object while Thread2 is waiting for Thread1 to release lock on an object. They are waiting on each other.</p>
+<p>To find:</p>
+<p>use <strong>Thread dump</strong>, thread dump is like to take a snapshot&#x2F;photos of all current threads, so it will show if there are deadlocks.</p>
+<p>JProfiler&#x2F;FastThread&#x2F;JStack are all tools can show thread dump.</p>
+<p>To prevent:</p>
+<ol>
+<li><p>For all shared objects&#x2F;resources by both threads should be combined as a whole entity and should be locked together.</p>
+</li>
+<li><p>Set global orders for the shared objects, so that threads will only lock them in same order.</p>
+</li>
+</ol>
+</blockquote>
+<h3 id="What-is-fail-fast-and-fail-safe"><a href="#What-is-fail-fast-and-fail-safe" class="headerlink" title="What is fail-fast and fail-safe?"></a>What is fail-fast and fail-safe?</h3><blockquote>
+<p>Fail-Fast: detects the possible failures before it happens. Like when you loop element of <strong>HashMap</strong> and try to remove it. It will fail fast with ConcurrentModificationException</p>
+<p>Fail-safe: Use the data structure that can handle ConcurrentModificationException by itself, so it will not throw exception, like when loop and remove elements from <strong>ConcurrentHashMap</strong>.</p>
+</blockquote>
+<h3 id="Map-vs-FlatMap"><a href="#Map-vs-FlatMap" class="headerlink" title="Map vs. FlatMap"></a>Map vs. FlatMap</h3><blockquote>
+<p>In Java 8 stream api.</p>
+<p>Map is to convert data, it takes a function as input.</p>
+<p>FlatMap is Map + Flat. It can handle 2 dimensional matrix, and apply Map on each row and then Flat each row result into a final 1 dimensional array.</p>
+</blockquote>
+<h3 id="why-using-static-and-why-not"><a href="#why-using-static-and-why-not" class="headerlink" title="why using static and why not?"></a>why using static and why not?</h3><blockquote>
+<p>What: static is a keyword to make sure there is only 1 copy of the resource. like static field, static method or static inner class</p>
+<p>For What: static resources can be shared across whole applications, like use static block so initalize some global data. Static method can be used as helper or util methods, we can just call Class.StaticMethod so we dont need to create instances.</p>
+<p>Why Not: Static object will not be garbage collected. They will stay in memory forever. Too many static objects can cause memory leak.</p>
+</blockquote>
+<h3 id="Difference-Synchronized-ThreadLocal-Volatile-AtomicInteger"><a href="#Difference-Synchronized-ThreadLocal-Volatile-AtomicInteger" class="headerlink" title="Difference: Synchronized, ThreadLocal, Volatile, AtomicInteger"></a>Difference: Synchronized, ThreadLocal, Volatile, AtomicInteger</h3><blockquote>
+<p><strong>Synchronized</strong>: it is to make resource thread safe in multi-threading environments, can be used on block of code OR method. If we have Employee object and it contains another address object and updateEmployee() method. If we put synchronized on the method, it will lock the whole employee object. If we use synchronized(address) in the code, it will only lock the address field, will not lock whole employee object, So the synchronized block has better performance.</p>
+<p><strong>ThreadLocal</strong>: If a variable is defined as ThreadLocal, then when a thread gets this variable, it will gets its own copy, so when this thread update this variable, it only updates its own copy, the other copies used by other threads will not be affected.</p>
+<p><strong>Volatile</strong>: If a variable is volatile, it is kept at a core main memory. All threads will only read and update this main copy. They will not have their own copy. All threas share exactly the same main copy. It guarantees that if one thread updates the value, the other threads will get that updated value because there is only 1 copy.</p>
+<p><strong>AtomicInteger</strong>: AtomicInteger&#x2F;AtomicBoolean&#x2F;AtomicReference etc: the ‘atomic’ is to make sure the operations on the variable is a single operation and cannot be splitted further. It is typically used as a Global Counting and prevent thread race conditions.</p>
+</blockquote>
+<h3 id="How-does-string-works-Why-is-String-immutable-in-Java"><a href="#How-does-string-works-Why-is-String-immutable-in-Java" class="headerlink" title="How does string works? Why is String immutable in Java?"></a>How does string works? Why is String immutable in Java?</h3><blockquote>
+<p>String is immutable in java, means once you create a string object, you cannot change it anymore. If you want to use mutable string, use StringBuilder instead.</p>
+<h3 id="How-string-memory-works"><a href="#How-string-memory-works" class="headerlink" title="How string memory works:"></a>How string memory works:</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">String s1 = &quot;abc&quot;;</span><br><span class="line">String s2 = new String(&quot;abc&quot;);</span><br><span class="line">String s3 = &quot;abc&quot;;</span><br><span class="line">String s4 = new String(&quot;abc&quot;);</span><br><span class="line">String s5 = &quot;abc&quot;.intern();</span><br></pre></td></tr></table></figure>
+
+<p>In memory, there is a “constant pool” which only stores the quoted string, like “abc”, it will not have duplicates in this constant pool. So when we create s1, it goes to constant pool. S2 is created by new String() constructor, whenever we call this constructore, we create a separate copy in the heap memory, not in the constant pool. For intern() method, it will check if the constant pool has a copy, it will use it, if not, it will create one copy in the constant pool,.</p>
+<p>So s1 &#x3D;&#x3D; s3 &#x3D;&#x3D; s5 !&#x3D; s2 !&#x3D; s4</p>
+<h3 id="Why-is-string-immutable"><a href="#Why-is-string-immutable" class="headerlink" title="Why is string immutable:"></a>Why is string immutable:</h3><ol>
+<li>So we can use it in many places, like as Map key.</li>
+<li>We can use it for security reasons, like store passwords or keys</li>
+<li>It will be thread safe, multi-thread cannot change the value.</li>
+<li>We can use for caching and hashing.. like as the Cache key or used in other APIs.</li>
+</ol>
+</blockquote>
+<h3 id="New-features-in-java-11-and-17"><a href="#New-features-in-java-11-and-17" class="headerlink" title="New features in java 11 and 17"></a>New features in java 11 and 17</h3><blockquote>
+<p>Java 11</p>
+<ol>
+<li>Local variable in lambda expression. Not you can use <strong>var</strong> to define local variables in java 11.</li>
+<li>New Garbage Collector: like Epsilon (for testing) and ZGC for low-latency and large heap system.</li>
+</ol>
+<p>Java 17:</p>
+<ol>
+<li>Sealed Class: Use “sealed” keyword to control which class can be subclass of this class. Use “permits” keyword to allow subclass.</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;sealed class Shape permits Circle, Rectangle, Triangle &#123;</span><br><span class="line">   // Common methods and properties for all subclasses</span><br><span class="line">   abstract double calculateArea();</span><br><span class="line">&gt;&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>Hidden Class: which can not be seen by java reflection.</li>
+<li>Text Blocks: allow you to use text like long strings.</li>
+</ol>
+</blockquote>
+<h3 id="Suppose-when-you-have-Employee-class-to-store-data-when-do-you-use-list-or-map"><a href="#Suppose-when-you-have-Employee-class-to-store-data-when-do-you-use-list-or-map" class="headerlink" title="Suppose when you have Employee class to store data, when do you use list or map"></a>Suppose when you have Employee class to store data, when do you use list or map</h3><blockquote>
+<ol>
+<li><p>List can have duplicates and it is just to store all information. Map is key value pair, key must be unique</p>
+</li>
+<li><p>In application, if you just want to show all employees in json format, you can use list; but if you want to show list of employee Ids and if you click the Ids it will display the whole employee json, so it is like you need a id –&gt; employee association, then you can use map.</p>
+</li>
+</ol>
+</blockquote>
+<h3 id="Difference-Arraylist-vs-LinkedList-when-to-use-which"><a href="#Difference-Arraylist-vs-LinkedList-when-to-use-which" class="headerlink" title="Difference: Arraylist vs LinkedList, when to use which"></a>Difference: Arraylist vs LinkedList, when to use which</h3><blockquote>
+<p>READ:</p>
+<ul>
+<li>ArrayList: is usually faster because it has index. It can be O(1), or worst O(n) if you dont know index</li>
+<li>LinkedList: is slower because you have to traverse from header, so it is always O(n)</li>
+</ul>
+<p>ADD&#x2F;REMOVE</p>
+<ul>
+<li>ArrayList: is usually slower because when you add element, you have to shift all elements after it. So it is O(n)</li>
+<li>LinkedList: is faster because you just change the pointer, O(1)</li>
+</ul>
+<p>INTERNAL IMPLEMENTATION:</p>
+<ul>
+<li>ArrayList: implemented by dynamic Array, Need less space because it only need to store value and index</li>
+<li>Linkedlist: double linkedlist, with value and pointers. Need more space to store, value, left and right pointer</li>
+</ul>
+<p>WHICH ONE:</p>
+<ul>
+<li>If your app need more READ, less ADD&#x2F;REMOVE, then linkedlist is good</li>
+</ul>
+<p>USE CASE:</p>
+<ul>
+<li>ArrayList: for example to store a list of objects</li>
+<li>Linkedlist: to store object where you just need previous or next value, like browser history or stack.</li>
+</ul>
+</blockquote>
+<h3 id="Difference-future-vs-completableFuture"><a href="#Difference-future-vs-completableFuture" class="headerlink" title="Difference future vs completableFuture"></a>Difference future vs completableFuture</h3><blockquote>
+<p>When you submit a task to executor service, it returns a future.</p>
+<p>CompletableFuture is advanced version of future.</p>
+<ol>
+<li><p>It has method like “thenApply”, “thenCombine” etc. It lets you chain asynchronous computations in a pipeline style instead of blocking or manually managing threads.</p>
+</li>
+<li><p>it has “handle” and “whenComplete” method, which you can handle exception with it.</p>
+</li>
+</ol>
+</blockquote>
+<h3 id="JDK-vs-JRE-vs-JVM"><a href="#JDK-vs-JRE-vs-JVM" class="headerlink" title="JDK vs JRE vs JVM"></a>JDK vs JRE vs JVM</h3><blockquote>
+<p>JDK is for developer to write java code, it can <strong>compile</strong> the java code to binary class code and also it has <strong>debug</strong> mode.</p>
+<p>JRE is a java running environment, if you want to run java application, you have to have JRE installed.</p>
+<p>JVM: java virtual machine, is to mange java memory, like heap, stack, metaspace etc.</p>
+</blockquote>
+<hr>
+<p>以下为weekly题目</p>
+<h3 id="Optimistic-locking-and-pessimistic-locking-mainly-differ-in-how-they-handle-conflicts-注意：这两个单词发音"><a href="#Optimistic-locking-and-pessimistic-locking-mainly-differ-in-how-they-handle-conflicts-注意：这两个单词发音" class="headerlink" title="Optimistic locking and pessimistic locking mainly differ in how they handle conflicts. 注意：这两个单词发音"></a>Optimistic locking and pessimistic locking mainly differ in how they handle conflicts. 注意：这两个单词发音</h3><blockquote>
+<p><strong>Optimistic locking</strong> assumes conflicts are rare.<br>So it doesn’t actually lock the data when you read it.<br>Instead, when you try to update, it checks whether the record has changed — usually with a version field.<br>If someone else updated it, your update fails and you retry.<br>This works really well in <em>read-heavy and low-<strong>contention</strong></em> situations.</p>
+<p><strong>Pessimistic locking</strong> assumes conflicts will happen.<br>So it locks the record as soon as you read it — for example using <em>SELECT … FOR UPDATE</em>.<br>Other transactions have to wait until the lock is released.<br>It’s safer, but it can reduce concurrency, and it’s usually used in <em>high-contention or financial systems</em>.</p>
+<p><strong>In short:</strong><br>Optimistic locking &#x3D; no lock, check version, retry if needed.<br>Pessimistic locking &#x3D; lock first, block others.</p>
+</blockquote>
+<h3 id="Even-if-an-index-exists-the-database-may-still-choose-not-to-use-it-for-several-reasons"><a href="#Even-if-an-index-exists-the-database-may-still-choose-not-to-use-it-for-several-reasons" class="headerlink" title="Even if an index exists, the database may still choose not to use it for several reasons."></a>Even if an index exists, the database may still choose not to use it for several reasons.</h3><blockquote>
+<p>One common reason is that you apply a function on the indexed column — for example using <code>LOWER()</code> or applying date functions — which makes the index unusable.</p>
+<p>Another frequent issue is using a pattern like <code>LIKE &#39;%abc&#39;</code> where the wildcard is at the beginning.<br>That forces a full table scan.</p>
+<p>Index selectivity also matters.<br>If the column has very low cardinality, like a field that only contains 0 or 1, the optimizer may decide that scanning the table is actually faster.</p>
+<p>Sometimes indexes are skipped because of implicit type conversion, outdated statistics, or because the query doesn’t follow the left-most prefix rule of composite indexes.</p>
+<p>And finally, the optimizer may simply think a full scan is cheaper — for example on very small tables.</p>
+<p><strong>So in short:</strong><br>Functions on indexed columns, bad patterns like leading <code>%</code> (读作<strong>percent sign</strong>), low selectivity, wrong index order, type conversion, or outdated statistics can all cause the database to ignore the index.</p>
+</blockquote>
+<h3 id="What-is-the-CAP-theorem"><a href="#What-is-the-CAP-theorem" class="headerlink" title="What is the CAP theorem?"></a>What is the CAP theorem?</h3><blockquote>
+<p><strong>The CAP theorem says that in a distributed system, you can’t have Consistency, Availability, and Partition Tolerance all at the same time.You can only guarantee two of them.</strong></p>
+<p><strong>Consistency</strong> means every node sees the same data.<br><strong>Availability</strong> means the system always responds.<br><strong>Partition Tolerance</strong> means the system keeps working even if the network between nodes fails.</p>
+<p>In real distributed systems, network partitions are unavoidable, so you must choose between <strong>CP</strong> and <strong>AP</strong>.</p>
+<ul>
+<li><strong>CP systems</strong> prioritize consistency over availability.</li>
+<li><strong>AP systems</strong> prioritize availability and allow eventual consistency.</li>
+</ul>
+<p>So, the main idea is: <em>you can’t have all three — you must trade off depending on your system’s needs</em>.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>行为</th>
+<th>典型代表</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>CP</strong></td>
+<td>分区时不服务，但保证强一致</td>
+<td>ZooKeeper &#x2F; Etcd &#x2F; HBase</td>
+<td>分布式锁、配置中心、选主</td>
+</tr>
+<tr>
+<td><strong>AP</strong></td>
+<td>分区时继续服务，但允许返回旧数据</td>
+<td>Cassandra &#x2F; DynamoDB &#x2F; Riak</td>
+<td>社交网络、访问量计数、高可用系统</td>
+</tr>
+<tr>
+<td><strong>ACID</strong></td>
+<td>单机强一致事务，无 CAP 取舍</td>
+<td>MySQL &#x2F; PostgreSQL</td>
+<td>金融系统、事务型业务</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://chatgpt.com/c/6a1b279c-30d0-83e8-bd73-625fcdd9933d">https://chatgpt.com/c/6a1b279c-30d0-83e8-bd73-625fcdd9933d</a></p>
+<p>go-to language 首选的，首要的语言 Java is like my go-to language.</p>
+<p>Give me some insight into… 这里insight不是洞察力而是详细信息</p>
+<p>How have you secured your application? 这里secured是保护，因为问的是Spring Security</p>
+<p>We enforce the security mainly on the backend itself. 这个enforce是实施，落实</p>
+<p>prehistories 这个词是史前，背景的意思 应该用previous history</p>
+<p>read out 宣读，大声念出来</p>
+<p>A comes with B 这个表述中带有大量这个表达 某物带有某种特点 Spring Boot comes with embedded Tomcat.</p>
+<p>TTL &#x3D;&#x3D; time to live</p>
+<p>expiry 和 expiration 这两个词都是到期的名词，expiration更正式，二者基本可以互换</p>
+<p><strong>这有个问题点 用什么做authorization server</strong> 例如和spring security配合使用<br>From where did you hit 这个技术栈 这个问题基本问的是登录过程</p>
+</blockquote>
+<h1 id="纯BQ"><a href="#纯BQ" class="headerlink" title="纯BQ"></a>纯BQ</h1><h3 id="1-Tell-me-about-a-time-you-disagreed-with-a-product-manager-stakeholder-API-consumer-about-a-requirement-or-design-and-how-you-handled-it"><a href="#1-Tell-me-about-a-time-you-disagreed-with-a-product-manager-stakeholder-API-consumer-about-a-requirement-or-design-and-how-you-handled-it" class="headerlink" title="1 Tell me about a time you disagreed with a product manager &#x2F; stakeholder &#x2F; API consumer about a requirement or design, and how you handled it."></a>1 Tell me about a time you disagreed with a product manager &#x2F; stakeholder &#x2F; API consumer about a requirement or design, and how you handled it.</h3><p> <strong>S (Situation)</strong></p>
+<blockquote>
+<p>I was working on a return management backend service where we expose APIs for creating return requests.<br>At one point, the product team proposed a new requirement to return very detailed real-time validation results directly in the same API response, including multiple downstream checks like order validation, product eligibility, and return policy evaluation.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>T (Task)</strong><br>My task was to implement the API changes and make sure it aligned with both business needs and system performance requirements. (aligned with 与。。保持一致)</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>A (Action)</strong><br>When I looked into it, I realized that doing all validations synchronously in one request could make the API more complex and slower, especially because some checks depended on downstream services like Order Service and Product Catalog Service.(这个Product Catalog理解为商品信息，商品信息目录)</p>
+</blockquote>
+<p>So I discussed with this product manager and clarified the trade-offs. I suggested a slightly different approach:</p>
+<ul>
+<li>Keep the API response lightweight, focusing on core validation</li>
+<li>Move some non-critical validations into an asynchronous process</li>
+</ul>
+<p>I also explained that this would keep the API faster and easier to maintain, while still meeting the business requirement of validating return eligibility.</p>
+<hr>
+<blockquote>
+<p><strong>R (Result)</strong><br>After discussion, we agreed on a simplified design where only essential validations happen in real time, and other checks are handled asynchronously.<br>This made the API more stable and reduced response time, while still meeting the business needs.</p>
+</blockquote>
+<h3 id="2-Tell-me-about-a-time-you-worked-on-a-component-service-or-issue-that-was-outside-your-service-boundary-or-team-ownership-and-still-took-responsibility-to-get-it-done"><a href="#2-Tell-me-about-a-time-you-worked-on-a-component-service-or-issue-that-was-outside-your-service-boundary-or-team-ownership-and-still-took-responsibility-to-get-it-done" class="headerlink" title="2 Tell me about a time you worked on a component, service, or issue that was outside your service boundary or team ownership, and still took responsibility to get it done."></a>2 Tell me about a time you worked on a component, service, or issue that was outside your service boundary or team ownership, and still took responsibility to get it done.</h3><blockquote>
+<p><strong>S (Situation)</strong><br>In my previous role, I was working on a Return Management Service. My team was mainly responsible for return intake APIs and core return lifecycle processing.<br>One time, we had an issue in production where return requests were failing intermittently, but the logs were not very clear and the issue seemed to involve a downstream dependency.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>T (Task)</strong><br>Although the downstream service was not owned by my team, the issue was blocking our return flow and affecting users. So I needed to help identify the <strong>root cause</strong> and make sure the system was stable again.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>A (Action)</strong><br>I started by looking into our own service logs and metrics, but I couldn’t fully pinpoint the issue.<br>Then I checked the integration points with the downstream services, especially the Order Service and Kafka message flow.</p>
+</blockquote>
+<p>Even though it was technically outside my service boundary, I coordinated with the downstream team and helped correlate request IDs across logs. I also added more logging temporarily in our service to better <strong>trace</strong> the request lifecycle.</p>
+<p>After analyzing the flow together, we found that the issue was caused by a mismatch in a field format in the Kafka message, which was breaking deserialization in the downstream consumer.</p>
+<p>I worked with the other team to fix the schema handling, and also added validation and better logging on our side to prevent similar issues in the future.</p>
+<hr>
+<blockquote>
+<p><strong>R (Result)</strong><br>After the fix, the failure rate dropped back ( dropped back 恢复到，降回) to normal, and the return flow became stable again.<br>We also improved the logging and contract clarity between the two services, which reduced similar debugging time in future incidents.</p>
+</blockquote>
+<h3 id="3-Tell-me-about-a-time-you-simplified-a-complex-system-API-or-introducing-a-cleaner-architecture"><a href="#3-Tell-me-about-a-time-you-simplified-a-complex-system-API-or-introducing-a-cleaner-architecture" class="headerlink" title="3 Tell me about a time you simplified a complex system, API, or introducing a cleaner architecture."></a>3 Tell me about a time you simplified a complex system, API, or introducing a cleaner architecture.</h3><blockquote>
+<p><strong>S (Situation)</strong><br>In my previous role, I worked on a Return Management Service that exposed APIs for creating and managing product return requests across multiple channels like web, in-store pos, and thrid party merchant APIs.<br>Initially, the return validation logic was spread across multiple places, and each API endpoint was handling slightly different business rules.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>T (Task)</strong><br>My goal was to make the system easier to maintain and reduce duplication in the return validation logic, so that adding new return rules or fixing issues wouldn’t require changes in multiple services or endpoints.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>A (Action)</strong><br>I analyzed the existing implementation and found that a lot of business rules like return eligibility, time window checks, and product restrictions were duplicated across different service methods.</p>
+</blockquote>
+<p>To simplify this, I refactored (refactor重构) the logic by centralizing the validation into a single service layer inside the Return Management Service.<br>Instead of each API handling its own logic, I created a unified validation flow that all endpoints could reuse.</p>
+<p>I also worked with the team to standardize the API response structure, so all return-related APIs would return consistent status formats like INITIATED, VALIDATED, or REJECTED.<br>This reduced ambiguity for downstream services and made integration easier.</p>
+<hr>
+<blockquote>
+<p><strong>R (Result)</strong><br>After the change, the code became much easier to maintain because we only had one place to update business rules.<br>It also reduced bugs caused by inconsistent logic across different endpoints, and made onboarding new engineers faster since the API behavior became more predictable and standardized.</p>
+</blockquote>
+<h3 id="4-Tell-me-about-a-time-your-service-API-did-not-meet-the-expected-behavior-or-SLA-Service-Level-Agreement-可理解为成功率，响应时间，错误率-and-what-you-did-to-fix-it"><a href="#4-Tell-me-about-a-time-your-service-API-did-not-meet-the-expected-behavior-or-SLA-Service-Level-Agreement-可理解为成功率，响应时间，错误率-and-what-you-did-to-fix-it" class="headerlink" title="4 Tell me about a time your service&#x2F;API did not meet the expected behavior or SLA (Service Level Agreement 可理解为成功率，响应时间，错误率), and what you did to fix it."></a>4 Tell me about a time your service&#x2F;API did not meet the expected behavior or SLA (<strong>Service Level Agreement 可理解为成功率，响应时间，错误率</strong>), and what you did to fix it.</h3><blockquote>
+<p><strong>S (Situation)</strong><br>In my previous role, I was working on a Return Management Service that handles return requests across multiple channels.<br>At one point, we noticed that the return creation API was experiencing higher latency than expected during peak traffic, and some requests were even timing out.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>T (Task)</strong><br>My responsibility was to help investigate the issue and bring the API performance back to a stable level, since it was affecting user experience and downstream workflows like refund processing.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>A (Action)</strong><br>I started by looking at application logs and monitoring dashboards to understand where the latency was coming from.<br>I noticed that a significant portion of the delay was caused by synchronous calls to downstream services like Product Catalog Service during return validation.</p>
+</blockquote>
+<p>To narrow it down, I added more detailed logging and traced the request flow end-to-end.<br>We found that under high traffic, these synchronous dependencies were slowing down the entire request path and causing timeouts.</p>
+<p>To fix the issue, I worked with the team to reduce the amount of synchronous work in the API path.<br>We optimized the flow by:</p>
+<ul>
+<li>Caching some frequently accessed product data</li>
+<li>Reducing unnecessary validation calls in the request path</li>
+<li>And deferring (v 推迟，服从) non-critical processing to asynchronous Kafka-based workflows</li>
+</ul>
+<hr>
+<blockquote>
+<p><strong>R (Result)</strong><br>After the changes, the API latency dropped significantly and the timeout rate was reduced.<br>The system became more stable under peak load, and we improved overall <strong>SLA</strong> compliance for the return service.<br>We also added better monitoring alerts to detect similar performance <strong>degradation （降级）</strong> earlier in the future.</p>
+</blockquote>
+<h3 id="5-Tell-me-about-a-time-you-took-on-work-outside-of-your-comfort-area"><a href="#5-Tell-me-about-a-time-you-took-on-work-outside-of-your-comfort-area" class="headerlink" title="5 Tell me about a time you took on work outside of your comfort area"></a>5 Tell me about a time you took on work outside of your comfort area</h3><blockquote>
+<p><strong>S (Situation)</strong><br>In my previous role, most of my experience was in building Java Spring Boot backend services and REST APIs.<br>At one point, I was assigned to support production troubleshooting and incident investigation, which required more exposure to infrastructure-level debugging and distributed system monitoring, which was not my <strong>strongest</strong> area initially.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>T (Task)</strong><br>I needed to investigate a production issue where our return management API was experiencing <strong>intermittent</strong> (断断续续的) failures. The challenge was that the root cause was not immediately clear and could involve multiple services or infrastructure components.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>A (Action)</strong><br>At the beginning, I was more comfortable working on application-level code, so diving into logs, metrics, and distributed tracing was outside my comfort zone.</p>
+</blockquote>
+<p>To handle this, I started learning how to use monitoring tools and log aggregation (聚合) systems to trace requests across services. I also worked closely with senior engineers to understand how to interpret system metrics and identify bottlenecks.</p>
+<p>Gradually, I was able to trace requests across our microservices, correlate logs using request IDs, and identify that the issue was related to a downstream dependency timing out under load.</p>
+<p>After identifying the root cause, I worked with the relevant team to fix the issue and also added better logging and alerts to improve future debugging.</p>
+<hr>
+<blockquote>
+<p><strong>R (Result)</strong><br>As a result, we resolved the production issue and improved system stability.<br>More importantly, I became more comfortable with production support and distributed system debugging, which expanded my skill set (skill set 表示<strong>技能组合</strong>) beyond just backend development into system-level troubleshooting.</p>
+</blockquote>
+<h3 id="6-Tell-me-about-a-time-you-refused-to-compromise-and-insisted-on-high-standards"><a href="#6-Tell-me-about-a-time-you-refused-to-compromise-and-insisted-on-high-standards" class="headerlink" title="6 Tell me about a time you refused to compromise and insisted on high standards"></a>6 Tell me about a time you refused to compromise and insisted on high standards</h3><blockquote>
+<p><strong>S (Situation)</strong><br>In my previous role, I was working on a Return Management Service that exposes APIs for creating and processing product return requests.<br>At one point, there was a request to quickly ship a feature where we would return partial success responses even when some downstream validations failed, mainly to speed up delivery for a business deadline. 稍微解释一下：为了赶业务上线时间，系统需要快速发布一个功能——即使有些下游校验失败，也要返回“部分成功”的结果</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>T (Task)</strong><br>My task was to implement the API changes quickly while ensuring the system behavior remained consistent and reliable for downstream services and customers.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>A (Action)</strong><br>When I looked into the requirement, I realized that the proposed behavior could lead to inconsistent return states.<br>For example, a return request could be marked as successful in the API response, but actually fail downstream processing in services like inventory.</p>
+</blockquote>
+<p>Instead of directly implementing it as-is, I raised the concern with the team and explained the potential risks:</p>
+<ul>
+<li>It could cause data inconsistency between services</li>
+<li>It would make debugging production issues very difficult</li>
+<li>Downstream services might assume the return was fully processed when it actually wasn’t</li>
+</ul>
+<p>I suggested an alternative approach:</p>
+<ul>
+<li>Keep the API response consistent with actual processing state</li>
+<li>Or explicitly introduce a clear status model like INITIATED → PROCESSING → COMPLETED&#x2F;FAILED</li>
+<li>And if needed, use asynchronous processing instead of partial success masking failures</li>
+</ul>
+<p>After discussion, we agreed not to implement the “fake success response” approach and instead kept the system behavior consistent and traceable.</p>
+<hr>
+<blockquote>
+<p><strong>R (Result)</strong><br>This decision helped avoid potential data inconsistency issues in production and made the system behavior easier to understand and debug.<br>It also improved trust from downstream teams because the API contract was clear and reliable.</p>
+</blockquote>
+<h3 id="7-Tell-me-about-a-time-you-did-something-that-made-a-big-impact-beyond-your-scope"><a href="#7-Tell-me-about-a-time-you-did-something-that-made-a-big-impact-beyond-your-scope" class="headerlink" title="7 Tell me about a time you did something that made a big impact beyond your scope"></a>7 Tell me about a time you did something that made a big impact beyond your scope</h3><blockquote>
+<p><strong>S (Situation)</strong><br>In my previous role, I was working on a Return Management Service that handles return requests across multiple channels like online, in-store, and merchant APIs.<br>At that time, different teams were integrating with our APIs, and we started seeing inconsistent return statuses reported by downstream consumers.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>T (Task)</strong><br>Although my main responsibility was only the return intake service, I needed to ensure that the API contract was clear and consistent because multiple downstream teams depended on it for refund, inventory, and notification workflows.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>A (Action)</strong><br>While investigating some integration issues, I noticed that different consumers were interpreting our API response fields differently, especially around return status values.</p>
+</blockquote>
+<p>Even though this was not originally part of my scope, I took initiative to:</p>
+<ul>
+<li>Review how our APIs were documented in Swagger</li>
+<li>Identify inconsistencies between documentation and actual implementation</li>
+<li>Align with other teams to clarify the meaning of key fields like INITIATED, VALIDATED, and REJECTED</li>
+<li>Standardize the response structure so all consumers had a consistent contract</li>
+</ul>
+<p>I also updated the API documentation and communicated the changes across teams so everyone could align on the same contract.</p>
+<hr>
+<blockquote>
+<p><strong>R (Result)</strong><br>After these changes, integration issues between teams were significantly reduced.<br>Downstream services became more stable because they no longer needed to handle ambiguous or inconsistent interpretations of our API responses.<br>It also reduced a lot of back-and-forth communication during integration, which improved overall development efficiency across teams.</p>
+</blockquote>
+<h3 id="8-Tell-me-about-a-time-you-made-a-quick-decision-without-consulting-your-manager"><a href="#8-Tell-me-about-a-time-you-made-a-quick-decision-without-consulting-your-manager" class="headerlink" title="8 Tell me about a time you made a quick decision without consulting your manager"></a>8 Tell me about a time you made a quick decision without consulting your manager</h3><blockquote>
+<p><strong>S (Situation)</strong><br>In my previous role, I was supporting a Return Management Service in production. One time, we started seeing a spike in failed return requests due to a downstream dependency timeout, and it was affecting users in real time.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>T (Task)</strong><br>My responsibility was to help stabilize the service quickly and minimize user impact. However, my manager was not immediately available, and the issue required a fast mitigation (缓解，减轻) decision.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>A (Action)</strong><br>After checking logs and metrics, I identified that the issue was caused by a synchronous call to a downstream service that was occasionally timing out under load.</p>
+</blockquote>
+<p>Since the system was still partially working, I made a quick decision to implement a temporary mitigation without waiting for manager approval:</p>
+<ul>
+<li>I added a timeout + fallback behavior in our service to prevent full request failure</li>
+<li>I also temporarily disabled a non-critical validation step that was contributing to the latency</li>
+<li>At the same time, I added monitoring logs so we could track the impact closely</li>
+</ul>
+<p>I made sure the change was safe, reversible, and limited in scope before deploying it. （<strong>在部署之前，把改动控制在一个很小、很安全的范围内</strong>）</p>
+<p>After the immediate risk was reduced, I informed my manager and the team, explained the situation, and aligned on a permanent fix later (which involved improving async processing with downstream services).</p>
+<hr>
+<blockquote>
+<p><strong>R (Result)</strong><br>The immediate mitigation reduced the failure rate significantly and stabilized the production system within a short time.<br>Users were no longer experiencing full request failures, and we were able to follow up with a proper long-term fix afterward.</p>
+</blockquote>
+<h3 id="9-Tell-me-about-a-time-you-received-critical-negative-feedback-How-did-you-handle-it"><a href="#9-Tell-me-about-a-time-you-received-critical-negative-feedback-How-did-you-handle-it" class="headerlink" title="9 Tell me about a time you received critical &#x2F; negative feedback. How did you handle it?"></a>9 Tell me about a time you received critical &#x2F; negative feedback. How did you handle it?</h3><blockquote>
+<p><strong>S (Situation)</strong><br>In my previous role, I was working on a Return Management Service where I was responsible for building REST APIs for return request processing.<br>After one of the initial releases, during a code review and also feedback from a senior engineer, I was told that my API design was too “chatty” （啰嗦）and not consistent enough in terms of response structure.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>T (Task)</strong><br>My task was to improve the API design so that it would be more consistent, easier to consume for downstream services, and reduce unnecessary complexity in integration.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>A (Action)</strong><br>At first, I honestly thought the APIs were fine because they were working functionally.<br>But after the feedback, I took a step back （step back: <strong>暂停当前细节，退一步从更高层次&#x2F;更整体的角度思考问题</strong>）and reviewed how different consumers were using the APIs.</p>
+</blockquote>
+<p>I realized the issue was valid: (issue was valid: 这个问题是成立的，真实存在的)</p>
+<ul>
+<li>different endpoints were returning slightly different response formats</li>
+<li>some fields were duplicated or inconsistently named</li>
+<li>downstream teams had to add extra mapping logic</li>
+</ul>
+<p>So I worked on improving the API design:</p>
+<ul>
+<li>I standardized the response structure across all return-related APIs</li>
+<li>I aligned field naming conventions (like status, returnId, timestamps)</li>
+<li>I also updated Swagger documentation to clearly define the contract</li>
+<li>and discussed the changes with the team to make sure it worked for all consumers</li>
+</ul>
+<hr>
+<blockquote>
+<p><strong>R (Result)</strong><br>After the changes, the APIs became much easier to integrate with.<br>We reduced confusion for downstream teams and decreased the amount of custom mapping logic they needed to write.<br>It also improved overall code consistency and made future API additions more predictable.</p>
+</blockquote>
+<h3 id="10-Tell-me-about-a-time-you-strongly-disagreed-with-your-manager-or-team-How-did-you-handle-it"><a href="#10-Tell-me-about-a-time-you-strongly-disagreed-with-your-manager-or-team-How-did-you-handle-it" class="headerlink" title="10 Tell me about a time you strongly disagreed with your manager or team. How did you handle it?"></a>10 Tell me about a time you strongly disagreed with your manager or team. How did you handle it?</h3><blockquote>
+<p><strong>S (Situation)</strong><br>In my previous role, I was working on a Return Management Service that processes return requests through multiple downstream services like Order Service, Refund Service, and Inventory Service.<br>At one point, there was a proposal from the team to add more synchronous validation calls into the return creation API in order to return a fully validated result immediately to the client.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>T (Task)</strong><br>As part of the implementation team, my responsibility was to deliver the API changes. However, I had concerns about the impact of making the API more synchronous and tightly coupled with downstream services.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>A (Action)</strong><br>I raised my concern in the design discussion and explained that increasing synchronous dependencies could:</p>
+</blockquote>
+<ul>
+<li>increase API latency</li>
+<li>increase risk of timeouts when downstream services are slow</li>
+<li>make the system more fragile under high traffic</li>
+</ul>
+<p>Instead of just saying “I don’t agree,” I <strong>broke down</strong> the trade-offs and suggested an alternative approach:</p>
+<ul>
+<li>keep the API lightweight and fast for return request creation</li>
+<li>move some validation logic to asynchronous processing using Kafka</li>
+<li>or cache certain reference data to reduce runtime dependency</li>
+</ul>
+<p>I also provided examples of how similar patterns in production had caused latency issues before.</p>
+<p>After discussion, the team agreed to adjust the design to reduce synchronous calls and keep only critical validations in the request path.</p>
+<hr>
+<blockquote>
+<p><strong>R (Result)</strong><br>The final implementation was more stable and scalable under load.<br>It reduced API latency and also lowered the risk of <strong>cascading</strong> failures when downstream services experienced issues.<br>More importantly, the team aligned on a clearer principle of keeping the return intake API lightweight and event-driven where possible.</p>
+</blockquote>
+<h3 id="11-Tell-me-about-a-time-you-had-a-tight-deadline-What-trade-offs-did-you-make"><a href="#11-Tell-me-about-a-time-you-had-a-tight-deadline-What-trade-offs-did-you-make" class="headerlink" title="11 Tell me about a time you had a tight deadline. What trade-offs did you make?"></a>11 Tell me about a time you had a tight deadline. What trade-offs did you make?</h3><blockquote>
+<p><strong>S (Situation)</strong><br>In my previous role, I was working on a Return Management Service. At one point, we had a tight business deadline to release a new return policy update that needed to support additional return validation rules across multiple channels like online and in-store.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>T (Task)</strong><br>My responsibility was to implement the API changes and ensure the new validation logic was correctly applied before the release deadline. However, the full design included multiple improvements like refactoring existing validation logic and optimizing downstream calls, which would normally take more time.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>A (Action)</strong><br>Since the timeline was tight, I worked with the team to prioritize what was critical for the release.</p>
+</blockquote>
+<p>We decided to:</p>
+<ul>
+<li>Focus only on implementing the core new validation rules required by the business</li>
+<li>Avoid large refactoring of existing validation logic to reduce risk</li>
+<li>Reuse existing service logic even if it was not fully optimized</li>
+<li>Defer performance optimizations and code cleanup to a later sprint</li>
+</ul>
+<p>To reduce risk, I also added basic logging and sanity checks （这个sanity check是说<strong>合理性检查 &#x2F; 基本正确性检查 &#x2F; 防呆检查</strong> 也就是检查状态合理） to ensure we could quickly detect issues after release.</p>
+<hr>
+<blockquote>
+<p><strong>R (Result)</strong><br>We successfully delivered the feature on time without impacting production stability.<br>After the release, we later revisited the code in a follow-up sprint to refactor the validation logic and improve performance.<br>This approach allowed us to meet the business deadline while still maintaining system reliability.</p>
+</blockquote>
+
   </div>
   
   
@@ -2774,10 +3449,10 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateModified" datetime="2026-05-20T22:24:13-07:00">
+          <div class="new-meta-item date" itemprop="dateModified" datetime="2026-06-10T00:21:41-07:00">
   <a class='notlink'>
     <i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i>
-    <p>更新于：May 20, 2026</p>
+    <p>更新于：Jun 10, 2026</p>
   </a>
 </div>
 
@@ -2917,7 +3592,7 @@ How to find all elements in a HashMap123for (K key : map.keySet()) &#1...</p>
 
 
     <div class='content'>
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BD%A0%E4%BB%AC%E7%9A%84-Return-Management-System-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8-Kafka%EF%BC%9F%E5%92%8C-RabbitMQ-%E7%9B%B8%E6%AF%94%EF%BC%8C%E4%BD%A0%E4%BB%AC%E6%98%AF%E5%9F%BA%E4%BA%8E%E5%93%AA%E4%BA%9B%E8%80%83%E9%87%8F%E5%81%9A%E7%9A%84%E9%80%89%E6%8B%A9"><span class="toc-text">1. 你们的 Return Management System 为什么要使用 Kafka？和 RabbitMQ 相比，你们是基于哪些考量做的选择??</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A0-Kafka-%E7%9A%84-QPS%E3%80%81partition-%E6%95%B0%E9%87%8F%E6%98%AF%E6%80%8E%E4%B9%88%E5%86%B3%E5%AE%9A%E7%9A%84%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">① Kafka 的 QPS、partition 数量是怎么决定的？为什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A1-%E4%BD%A0%E4%BB%AC%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81-message-%E4%B8%8D%E4%BC%9A%E4%B8%A2%EF%BC%9F%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81-exactly-once-%E6%88%96-at-least-once%EF%BC%9F"><span class="toc-text">② 你们怎么保证 message 不会丢？怎么保证 exactly-once 或 at-least-once？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A2-%E5%A6%82%E6%9E%9C-downstream-%E6%9C%8D%E5%8A%A1%E5%AE%95%E6%9C%BA%E4%BA%86%EF%BC%8C%E4%BD%A0%E4%BB%AC%E7%9A%84%E7%B3%BB%E7%BB%9F%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E4%B8%8D%E4%BC%9A%E5%B4%A9%EF%BC%9F"><span class="toc-text">③ 如果 downstream 服务宕机了，你们的系统怎么保证不会崩？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A3-%E4%BD%A0%E4%BB%AC%E6%80%8E%E4%B9%88%E9%98%B2%E6%AD%A2%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9%EF%BC%9F%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E5%B9%82%E7%AD%89%E6%80%A7%EF%BC%9F"><span class="toc-text">④ 你们怎么防止重复消费？如何保证幂等性？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A4-%E4%BD%A0%E4%BB%AC%E7%9A%84-refund-event-schema-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F%E6%9C%89%E6%B2%A1%E6%9C%89%E5%81%9A-schema-evolution%EF%BC%9F"><span class="toc-text">⑤ 你们的 refund event schema 是怎么设计的？有没有做 schema evolution？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A5-%E4%BD%A0%E4%BB%AC%E6%9C%89%E6%B2%A1%E6%9C%89%E7%94%A8-message-ordering%EF%BC%9F%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E9%A1%BA%E5%BA%8F%EF%BC%9F"><span class="toc-text">⑥ 你们有没有用 message ordering？怎么保证顺序？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A6-%E4%BD%A0%E4%BB%AC%E7%94%A8-Kafka-%E4%B8%BB%E8%A6%81%E6%98%AF-async%EF%BC%8C%E9%82%A3%E6%9F%90%E4%BA%9B%E6%B5%81%E7%A8%8B%E9%9C%80%E8%A6%81-sync-response-%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F"><span class="toc-text">⑦ 你们用 Kafka 主要是 async，那某些流程需要 sync response 怎么办？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A7-%E4%BD%A0%E4%BB%AC%E6%9C%89%E6%B2%A1%E6%9C%89%E9%81%87%E5%88%B0%E8%BF%87-consumer-lag%EF%BC%9F%E6%80%8E%E4%B9%88%E7%9B%91%E6%8E%A7%EF%BC%9F%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3%EF%BC%9F"><span class="toc-text">⑧ 你们有没有遇到过 consumer lag？怎么监控？怎么解决？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A8-%E4%BD%A0%E4%BB%AC%E7%9A%84-retry-%E6%9C%BA%E5%88%B6%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1%EF%BC%9F%E6%9C%89%E6%B2%A1%E6%9C%89-dead-letter-topic%EF%BC%9F"><span class="toc-text">⑨ 你们的 retry 机制怎么设计？有没有 dead-letter topic？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How-we-designed-our-retry-mechanism"><span class="toc-text">How we designed our retry mechanism</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Do-we-have-a-dead-letter-topic"><span class="toc-text">Do we have a dead-letter topic?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A9-%E5%A6%82%E6%9E%9C-Kafka-%E6%95%B4%E4%BD%93%E5%AE%95%E6%9C%BA%EF%BC%8C%E4%BD%A0%E4%BB%AC%E7%B3%BB%E7%BB%9F%E6%80%8E%E4%B9%88%E5%A4%84%E7%90%86%EF%BC%9F%E6%9C%89%E6%B2%A1%E6%9C%89-fallback%EF%BC%9F"><span class="toc-text">⑩ 如果 Kafka 整体宕机，你们系统怎么处理？有没有 fallback？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#If-Kafka-goes-down-how-does-our-system-handle-it-Do-we-have-a-fallback"><span class="toc-text">If Kafka goes down, how does our system handle it? Do we have a fallback?</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-First-of-all-our-producers-don%E2%80%99t-crash-%E2%80%94-they-buffer"><span class="toc-text">1. First of all, our producers don’t crash — they buffer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-We-write-the-failed-messages-into-a-fallback-storage"><span class="toc-text">2. We write the failed messages into a fallback storage</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-On-the-consumer-side-we-actually-become-%E2%80%9Cidle%E2%80%9D-instead-of-erroring"><span class="toc-text">3. On the consumer side, we actually become “idle” instead of erroring</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-We-have-alerts-if-Kafka-is-down"><span class="toc-text">4. We have alerts if Kafka is down</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-The-key-idea"><span class="toc-text">5. The key idea</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BD%A0%E4%BB%AC%E7%9A%84-Kafka-topic-%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9Fpartition-%E6%95%B0%E9%87%8F%E3%80%81replication-factor-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%BE%E7%BD%AE%E7%9A%84%EF%BC%9FQPS-%E5%A4%A7%E6%A6%82%E5%A4%9A%E5%B0%91%EF%BC%9F%E6%9C%89%E6%B2%A1%E6%9C%89%E9%81%87%E5%88%B0-backpressure%EF%BC%9F"><span class="toc-text">2. 你们的 Kafka topic 是如何设计的？partition 数量、replication factor 是怎么设置的？QPS 大概多少？有没有遇到 backpressure？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%9C%A8-Return-workflow-%E4%B8%AD%EF%BC%8Cevent-driven-workflow-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F%E6%AF%94%E5%A6%82%E4%B8%80%E4%B8%AA-refund-event-%E4%BB%8E%E4%BA%A7%E7%94%9F%E5%88%B0%E6%B6%88%E8%B4%B9%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B%E8%83%BD%E8%AE%B2%E4%B8%80%E4%B8%8B%E5%90%97%EF%BC%9F"><span class="toc-text">3. 在 Return workflow 中，event-driven workflow 是怎么设计的？比如一个 refund event 从产生到消费完整流程能讲一下吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%BD%A0%E7%AE%80%E5%8E%86%E4%B8%AD%E6%8F%90%E5%88%B0%E4%BA%86-Azure-SQL-Database%EF%BC%8C%E6%AF%8F%E5%A4%A9-100-%E4%B8%87-transactions%E3%80%82%E4%BD%A0%E4%BB%AC%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E9%AB%98%E5%90%9E%E5%90%90%EF%BC%9F%E6%98%AF%E5%90%A6%E5%81%9A%E4%BA%86-connection-pool-%E4%BC%98%E5%8C%96%E3%80%81batch-write%E3%80%81index-%E8%B0%83%E4%BC%98%EF%BC%9F"><span class="toc-text">4. 你简历中提到了 Azure SQL Database，每天 100 万+ transactions。你们怎么保证高吞吐？是否做了 connection pool 优化、batch write、index 调优？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E4%BD%A0%E4%BB%AC%E6%9C%89%E6%B2%A1%E6%9C%89%E4%BD%BF%E7%94%A8-NoSQL-%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9F%E5%A6%82%E6%9E%9C%E6%9C%89%E7%9A%84%E8%AF%9D%E5%9C%A8%E9%A1%B9%E7%9B%AE%E4%B8%AD%E8%B4%9F%E8%B4%A3%E4%BB%80%E4%B9%88%EF%BC%9F%E5%92%8C-SQL-%E5%A6%82%E4%BD%95%E5%88%92%E5%88%86%EF%BC%9F"><span class="toc-text">5. 你们有没有使用 NoSQL 数据库？如果有的话在项目中负责什么？和 SQL 如何划分？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E4%BD%A0%E6%8F%90%E5%88%B0%E4%BD%BF%E7%94%A8-Apache-Camel-%E5%81%9A-routing-%E5%92%8C-transformation%EF%BC%8C%E5%8F%AF%E4%BB%A5%E7%BB%99%E6%88%91%E4%B8%BE%E4%B8%80%E4%B8%AA%E5%85%B7%E4%BD%93%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E5%90%97%EF%BC%9F%E6%AF%94%E5%A6%82%E8%B0%83%E7%94%A8%E4%B8%80%E4%B8%AA%E4%B8%8B%E6%B8%B8%E6%9C%8D%E5%8A%A1%E5%81%9A-message-transformation-%E7%9A%84%E6%B5%81%E7%A8%8B%EF%BC%9F"><span class="toc-text">6. 你提到使用 Apache Camel 做 routing 和 transformation，可以给我举一个具体使用场景吗？比如调用一个下游服务做 message transformation 的流程？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E4%BD%A0%E8%AF%B4%E4%BD%A0%E6%8F%90%E9%AB%98%E4%BA%86%E5%86%85%E9%83%A8%E6%9C%8D%E5%8A%A1%E7%9A%84-response-time%EF%BC%8C%E5%85%B7%E4%BD%93%E6%98%AF%E6%80%8E%E4%B9%88%E4%BC%98%E5%8C%96%E7%9A%84%EF%BC%9F%E5%8F%AF%E4%BB%A5%E8%AF%B4%E4%B8%80%E4%B8%AA%E4%BD%A0%E5%AE%9E%E9%99%85%E5%81%9A%E8%BF%87%E7%9A%84-performance-bottleneck-%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%E5%90%97%EF%BC%9F"><span class="toc-text">7. 你说你提高了内部服务的 response time，具体是怎么优化的？可以说一个你实际做过的 performance bottleneck 和解决方案吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-Return-Management-System-%E6%98%AF%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86-retry%E3%80%81%E5%B9%82%E7%AD%89%E6%80%A7%EF%BC%88idempotency%EF%BC%89%E4%BB%A5%E5%8F%8A%E9%87%8D%E5%A4%8D%E4%BA%8B%E4%BB%B6%E7%9A%84%EF%BC%9F%E6%9C%89%E4%BD%BF%E7%94%A8-Redis%E3%80%81DB-Lock-%E6%88%96%E5%85%B6%E4%BB%96%E6%9C%BA%E5%88%B6%E5%90%97%EF%BC%9F"><span class="toc-text">8. Return Management System 是如何处理 retry、幂等性（idempotency）以及重复事件的？有使用 Redis、DB Lock 或其他机制吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-%E4%BD%A0%E4%BB%AC%E7%94%A8-JUnit-Mockito-%E5%81%9A%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%EF%BC%8C%E5%8F%AF%E4%BB%A5%E8%AE%B2%E4%B8%80%E4%B8%AA%E5%85%B7%E4%BD%93-case-%E5%90%97%EF%BC%9F%E6%AF%94%E5%A6%82%E4%B8%80%E4%B8%AA%E5%A4%84%E7%90%86-refund-%E7%9A%84-service-%E4%BD%A0%E4%BB%AC%E6%80%8E%E4%B9%88-mock-dependencies%EF%BC%9F"><span class="toc-text">9. 你们用 JUnit + Mockito 做单元测试，可以讲一个具体 case 吗？比如一个处理 refund 的 service 你们怎么 mock dependencies？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-Open-Observe-%E4%BD%A0%E7%94%A8%E6%9D%A5%E5%81%9A%E4%BB%80%E4%B9%88%EF%BC%9F%E5%8F%AF%E4%BB%A5%E4%B8%BE%E4%B8%80%E4%B8%AA%E4%BD%A0%E6%8E%92%E6%9F%A5%E7%94%9F%E4%BA%A7%E9%97%AE%E9%A2%98%E7%9A%84%E4%BE%8B%E5%AD%90%E5%90%97%EF%BC%9F"><span class="toc-text">10. Open Observe 你用来做什么？可以举一个你排查生产问题的例子吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E4%BD%A0%E5%8F%82%E4%B8%8E%E8%BF%87-on-call%EF%BC%8C%E8%83%BD%E4%B8%BE%E4%B8%80%E4%B8%AA-Sev2-%E6%88%96-Sev3-%E7%9A%84-incident-%E5%90%97%EF%BC%9F%E4%BD%A0%E5%BD%93%E6%97%B6%E6%80%8E%E4%B9%88%E5%A4%84%E7%90%86%E3%80%81%E7%94%A8%E5%93%AA%E4%BA%9B%E5%B7%A5%E5%85%B7%E3%80%81%E6%9C%80%E7%BB%88%E5%A6%82%E4%BD%95-fix%EF%BC%9F"><span class="toc-text">11. 你参与过 on-call，能举一个 Sev2 或 Sev3 的 incident 吗？你当时怎么处理、用哪些工具、最终如何 fix？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA-Return-Service%EF%BC%8C%E5%A6%82%E6%9E%9C%E9%9C%80%E8%A6%81%E5%A4%84%E7%90%86-5-%E5%80%8D%E7%9A%84%E6%B5%81%E9%87%8F%EF%BC%8C%E4%BD%A0%E4%BC%9A%E6%80%8E%E4%B9%88%E6%89%A9%E5%B1%95%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%EF%BC%9FKafka%E3%80%81SQL%E3%80%81%E6%9C%8D%E5%8A%A1%E5%B1%82%E5%88%86%E5%88%AB%E6%80%8E%E4%B9%88%E6%89%A9%E5%B1%95%EF%BC%9F"><span class="toc-text">12. 设计一个 Return Service，如果需要处理 5 倍的流量，你会怎么扩展系统架构？Kafka、SQL、服务层分别怎么扩展？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-%E5%A6%82%E6%9E%9C%E4%B8%8B%E6%B8%B8%E6%9C%8D%E5%8A%A1%EF%BC%88%E4%BE%8B%E5%A6%82-refund-service%EF%BC%89%E5%AE%95%E6%9C%BA%EF%BC%8C%E4%BD%A0%E4%BB%AC%E7%9A%84%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0-graceful-degradation%EF%BC%9F%E6%B6%88%E6%81%AF%E6%98%AF%E5%90%A6%E4%BC%9A%E4%B8%A2%E5%A4%B1%EF%BC%9F%E5%A6%82%E4%BD%95%E7%A1%AE%E4%BF%9D%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F"><span class="toc-text">13. 如果下游服务（例如 refund service）宕机，你们的系统如何实现 graceful degradation？消息是否会丢失？如何确保最终一致性？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-%E5%9C%A8%E4%BD%A0%E5%BC%80%E5%8F%91-Return-Management-System-%E7%9A%84%E8%BF%87%E7%A8%8B%E4%B8%AD%EF%BC%8C%E4%BD%A0%E6%9C%80%E6%9C%89%E6%88%90%E5%B0%B1%E6%84%9F%E7%9A%84%E4%B8%80%E9%A1%B9%E8%B4%A1%E7%8C%AE%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">14. 在你开发 Return Management System 的过程中，你最有成就感的一项贡献是什么？为什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#15-%E9%81%87%E5%88%B0%E5%9B%A2%E9%98%9F%E6%B2%9F%E9%80%9A%E9%97%AE%E9%A2%98%EF%BC%8C%E4%BD%A0%E6%98%AF%E6%80%8E%E4%B9%88%E5%8A%9E%E7%9A%84%EF%BC%9F%E6%9C%89%E6%B2%A1%E6%9C%89%E4%BE%8B%E5%AD%90%EF%BC%9F"><span class="toc-text">15. 遇到团队沟通问题，你是怎么办的？有没有例子？</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BD%A0%E4%BB%AC%E7%9A%84-Return-Management-System-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8-Kafka%EF%BC%9F%E5%92%8C-RabbitMQ-%E7%9B%B8%E6%AF%94%EF%BC%8C%E4%BD%A0%E4%BB%AC%E6%98%AF%E5%9F%BA%E4%BA%8E%E5%93%AA%E4%BA%9B%E8%80%83%E9%87%8F%E5%81%9A%E7%9A%84%E9%80%89%E6%8B%A9"><span class="toc-text">1. 你们的 Return Management System 为什么要使用 Kafka？和 RabbitMQ 相比，你们是基于哪些考量做的选择??</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A0-Kafka-%E7%9A%84-QPS%E3%80%81partition-%E6%95%B0%E9%87%8F%E6%98%AF%E6%80%8E%E4%B9%88%E5%86%B3%E5%AE%9A%E7%9A%84%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">① Kafka 的 QPS、partition 数量是怎么决定的？为什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A1-%E4%BD%A0%E4%BB%AC%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81-message-%E4%B8%8D%E4%BC%9A%E4%B8%A2%EF%BC%9F%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81-exactly-once-%E6%88%96-at-least-once%EF%BC%9F"><span class="toc-text">② 你们怎么保证 message 不会丢？怎么保证 exactly-once 或 at-least-once？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A2-%E5%A6%82%E6%9E%9C-downstream-%E6%9C%8D%E5%8A%A1%E5%AE%95%E6%9C%BA%E4%BA%86%EF%BC%8C%E4%BD%A0%E4%BB%AC%E7%9A%84%E7%B3%BB%E7%BB%9F%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E4%B8%8D%E4%BC%9A%E5%B4%A9%EF%BC%9F"><span class="toc-text">③ 如果 downstream 服务宕机了，你们的系统怎么保证不会崩？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A3-%E4%BD%A0%E4%BB%AC%E6%80%8E%E4%B9%88%E9%98%B2%E6%AD%A2%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9%EF%BC%9F%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E5%B9%82%E7%AD%89%E6%80%A7%EF%BC%9F"><span class="toc-text">④ 你们怎么防止重复消费？如何保证幂等性？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A4-%E4%BD%A0%E4%BB%AC%E7%9A%84-refund-event-schema-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F%E6%9C%89%E6%B2%A1%E6%9C%89%E5%81%9A-schema-evolution%EF%BC%9F"><span class="toc-text">⑤ 你们的 refund event schema 是怎么设计的？有没有做 schema evolution？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A5-%E4%BD%A0%E4%BB%AC%E6%9C%89%E6%B2%A1%E6%9C%89%E7%94%A8-message-ordering%EF%BC%9F%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E9%A1%BA%E5%BA%8F%EF%BC%9F"><span class="toc-text">⑥ 你们有没有用 message ordering？怎么保证顺序？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A6-%E4%BD%A0%E4%BB%AC%E7%94%A8-Kafka-%E4%B8%BB%E8%A6%81%E6%98%AF-async%EF%BC%8C%E9%82%A3%E6%9F%90%E4%BA%9B%E6%B5%81%E7%A8%8B%E9%9C%80%E8%A6%81-sync-response-%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F"><span class="toc-text">⑦ 你们用 Kafka 主要是 async，那某些流程需要 sync response 怎么办？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A7-%E4%BD%A0%E4%BB%AC%E6%9C%89%E6%B2%A1%E6%9C%89%E9%81%87%E5%88%B0%E8%BF%87-consumer-lag%EF%BC%9F%E6%80%8E%E4%B9%88%E7%9B%91%E6%8E%A7%EF%BC%9F%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3%EF%BC%9F"><span class="toc-text">⑧ 你们有没有遇到过 consumer lag？怎么监控？怎么解决？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A8-%E4%BD%A0%E4%BB%AC%E7%9A%84-retry-%E6%9C%BA%E5%88%B6%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1%EF%BC%9F%E6%9C%89%E6%B2%A1%E6%9C%89-dead-letter-topic%EF%BC%9F"><span class="toc-text">⑨ 你们的 retry 机制怎么设计？有没有 dead-letter topic？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How-we-designed-our-retry-mechanism"><span class="toc-text">How we designed our retry mechanism</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Do-we-have-a-dead-letter-topic"><span class="toc-text">Do we have a dead-letter topic?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%91%A9-%E5%A6%82%E6%9E%9C-Kafka-%E6%95%B4%E4%BD%93%E5%AE%95%E6%9C%BA%EF%BC%8C%E4%BD%A0%E4%BB%AC%E7%B3%BB%E7%BB%9F%E6%80%8E%E4%B9%88%E5%A4%84%E7%90%86%EF%BC%9F%E6%9C%89%E6%B2%A1%E6%9C%89-fallback%EF%BC%9F"><span class="toc-text">⑩ 如果 Kafka 整体宕机，你们系统怎么处理？有没有 fallback？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#If-Kafka-goes-down-how-does-our-system-handle-it-Do-we-have-a-fallback"><span class="toc-text">If Kafka goes down, how does our system handle it? Do we have a fallback?</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-First-of-all-our-producers-don%E2%80%99t-crash-%E2%80%94-they-buffer"><span class="toc-text">1. First of all, our producers don’t crash — they buffer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-We-write-the-failed-messages-into-a-fallback-storage"><span class="toc-text">2. We write the failed messages into a fallback storage</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-On-the-consumer-side-we-actually-become-%E2%80%9Cidle%E2%80%9D-instead-of-erroring"><span class="toc-text">3. On the consumer side, we actually become “idle” instead of erroring</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-We-have-alerts-if-Kafka-is-down"><span class="toc-text">4. We have alerts if Kafka is down</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-The-key-idea"><span class="toc-text">5. The key idea</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BD%A0%E4%BB%AC%E7%9A%84-Kafka-topic-%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9Fpartition-%E6%95%B0%E9%87%8F%E3%80%81replication-factor-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%BE%E7%BD%AE%E7%9A%84%EF%BC%9FQPS-%E5%A4%A7%E6%A6%82%E5%A4%9A%E5%B0%91%EF%BC%9F%E6%9C%89%E6%B2%A1%E6%9C%89%E9%81%87%E5%88%B0-backpressure%EF%BC%9F"><span class="toc-text">2. 你们的 Kafka topic 是如何设计的？partition 数量、replication factor 是怎么设置的？QPS 大概多少？有没有遇到 backpressure？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%9C%A8-Return-workflow-%E4%B8%AD%EF%BC%8Cevent-driven-workflow-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F%E6%AF%94%E5%A6%82%E4%B8%80%E4%B8%AA-refund-event-%E4%BB%8E%E4%BA%A7%E7%94%9F%E5%88%B0%E6%B6%88%E8%B4%B9%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B%E8%83%BD%E8%AE%B2%E4%B8%80%E4%B8%8B%E5%90%97%EF%BC%9F"><span class="toc-text">3. 在 Return workflow 中，event-driven workflow 是怎么设计的？比如一个 refund event 从产生到消费完整流程能讲一下吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%BD%A0%E7%AE%80%E5%8E%86%E4%B8%AD%E6%8F%90%E5%88%B0%E4%BA%86-Azure-SQL-Database%EF%BC%8C%E6%AF%8F%E5%A4%A9-100-%E4%B8%87-transactions%E3%80%82%E4%BD%A0%E4%BB%AC%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E9%AB%98%E5%90%9E%E5%90%90%EF%BC%9F%E6%98%AF%E5%90%A6%E5%81%9A%E4%BA%86-connection-pool-%E4%BC%98%E5%8C%96%E3%80%81batch-write%E3%80%81index-%E8%B0%83%E4%BC%98%EF%BC%9F"><span class="toc-text">4. 你简历中提到了 Azure SQL Database，每天 100 万+ transactions。你们怎么保证高吞吐？是否做了 connection pool 优化、batch write、index 调优？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E4%BD%A0%E4%BB%AC%E6%9C%89%E6%B2%A1%E6%9C%89%E4%BD%BF%E7%94%A8-NoSQL-%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9F%E5%A6%82%E6%9E%9C%E6%9C%89%E7%9A%84%E8%AF%9D%E5%9C%A8%E9%A1%B9%E7%9B%AE%E4%B8%AD%E8%B4%9F%E8%B4%A3%E4%BB%80%E4%B9%88%EF%BC%9F%E5%92%8C-SQL-%E5%A6%82%E4%BD%95%E5%88%92%E5%88%86%EF%BC%9F"><span class="toc-text">5. 你们有没有使用 NoSQL 数据库？如果有的话在项目中负责什么？和 SQL 如何划分？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E4%BD%A0%E6%8F%90%E5%88%B0%E4%BD%BF%E7%94%A8-Apache-Camel-%E5%81%9A-routing-%E5%92%8C-transformation%EF%BC%8C%E5%8F%AF%E4%BB%A5%E7%BB%99%E6%88%91%E4%B8%BE%E4%B8%80%E4%B8%AA%E5%85%B7%E4%BD%93%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E5%90%97%EF%BC%9F%E6%AF%94%E5%A6%82%E8%B0%83%E7%94%A8%E4%B8%80%E4%B8%AA%E4%B8%8B%E6%B8%B8%E6%9C%8D%E5%8A%A1%E5%81%9A-message-transformation-%E7%9A%84%E6%B5%81%E7%A8%8B%EF%BC%9F"><span class="toc-text">6. 你提到使用 Apache Camel 做 routing 和 transformation，可以给我举一个具体使用场景吗？比如调用一个下游服务做 message transformation 的流程？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E4%BD%A0%E8%AF%B4%E4%BD%A0%E6%8F%90%E9%AB%98%E4%BA%86%E5%86%85%E9%83%A8%E6%9C%8D%E5%8A%A1%E7%9A%84-response-time%EF%BC%8C%E5%85%B7%E4%BD%93%E6%98%AF%E6%80%8E%E4%B9%88%E4%BC%98%E5%8C%96%E7%9A%84%EF%BC%9F%E5%8F%AF%E4%BB%A5%E8%AF%B4%E4%B8%80%E4%B8%AA%E4%BD%A0%E5%AE%9E%E9%99%85%E5%81%9A%E8%BF%87%E7%9A%84-performance-bottleneck-%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%E5%90%97%EF%BC%9F"><span class="toc-text">7. 你说你提高了内部服务的 response time，具体是怎么优化的？可以说一个你实际做过的 performance bottleneck 和解决方案吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-Return-Management-System-%E6%98%AF%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86-retry%E3%80%81%E5%B9%82%E7%AD%89%E6%80%A7%EF%BC%88idempotency%EF%BC%89%E4%BB%A5%E5%8F%8A%E9%87%8D%E5%A4%8D%E4%BA%8B%E4%BB%B6%E7%9A%84%EF%BC%9F%E6%9C%89%E4%BD%BF%E7%94%A8-Redis%E3%80%81DB-Lock-%E6%88%96%E5%85%B6%E4%BB%96%E6%9C%BA%E5%88%B6%E5%90%97%EF%BC%9F"><span class="toc-text">8. Return Management System 是如何处理 retry、幂等性（idempotency）以及重复事件的？有使用 Redis、DB Lock 或其他机制吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-%E4%BD%A0%E4%BB%AC%E7%94%A8-JUnit-Mockito-%E5%81%9A%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%EF%BC%8C%E5%8F%AF%E4%BB%A5%E8%AE%B2%E4%B8%80%E4%B8%AA%E5%85%B7%E4%BD%93-case-%E5%90%97%EF%BC%9F%E6%AF%94%E5%A6%82%E4%B8%80%E4%B8%AA%E5%A4%84%E7%90%86-refund-%E7%9A%84-service-%E4%BD%A0%E4%BB%AC%E6%80%8E%E4%B9%88-mock-dependencies%EF%BC%9F"><span class="toc-text">9. 你们用 JUnit + Mockito 做单元测试，可以讲一个具体 case 吗？比如一个处理 refund 的 service 你们怎么 mock dependencies？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-Open-Observe-%E4%BD%A0%E7%94%A8%E6%9D%A5%E5%81%9A%E4%BB%80%E4%B9%88%EF%BC%9F%E5%8F%AF%E4%BB%A5%E4%B8%BE%E4%B8%80%E4%B8%AA%E4%BD%A0%E6%8E%92%E6%9F%A5%E7%94%9F%E4%BA%A7%E9%97%AE%E9%A2%98%E7%9A%84%E4%BE%8B%E5%AD%90%E5%90%97%EF%BC%9F"><span class="toc-text">10. Open Observe 你用来做什么？可以举一个你排查生产问题的例子吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E4%BD%A0%E5%8F%82%E4%B8%8E%E8%BF%87-on-call%EF%BC%8C%E8%83%BD%E4%B8%BE%E4%B8%80%E4%B8%AA-Sev2-%E6%88%96-Sev3-%E7%9A%84-incident-%E5%90%97%EF%BC%9F%E4%BD%A0%E5%BD%93%E6%97%B6%E6%80%8E%E4%B9%88%E5%A4%84%E7%90%86%E3%80%81%E7%94%A8%E5%93%AA%E4%BA%9B%E5%B7%A5%E5%85%B7%E3%80%81%E6%9C%80%E7%BB%88%E5%A6%82%E4%BD%95-fix%EF%BC%9F"><span class="toc-text">11. 你参与过 on-call，能举一个 Sev2 或 Sev3 的 incident 吗？你当时怎么处理、用哪些工具、最终如何 fix？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA-Return-Service%EF%BC%8C%E5%A6%82%E6%9E%9C%E9%9C%80%E8%A6%81%E5%A4%84%E7%90%86-5-%E5%80%8D%E7%9A%84%E6%B5%81%E9%87%8F%EF%BC%8C%E4%BD%A0%E4%BC%9A%E6%80%8E%E4%B9%88%E6%89%A9%E5%B1%95%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%EF%BC%9FKafka%E3%80%81SQL%E3%80%81%E6%9C%8D%E5%8A%A1%E5%B1%82%E5%88%86%E5%88%AB%E6%80%8E%E4%B9%88%E6%89%A9%E5%B1%95%EF%BC%9F"><span class="toc-text">12. 设计一个 Return Service，如果需要处理 5 倍的流量，你会怎么扩展系统架构？Kafka、SQL、服务层分别怎么扩展？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-%E5%A6%82%E6%9E%9C%E4%B8%8B%E6%B8%B8%E6%9C%8D%E5%8A%A1%EF%BC%88%E4%BE%8B%E5%A6%82-refund-service%EF%BC%89%E5%AE%95%E6%9C%BA%EF%BC%8C%E4%BD%A0%E4%BB%AC%E7%9A%84%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0-graceful-degradation%EF%BC%9F%E6%B6%88%E6%81%AF%E6%98%AF%E5%90%A6%E4%BC%9A%E4%B8%A2%E5%A4%B1%EF%BC%9F%E5%A6%82%E4%BD%95%E7%A1%AE%E4%BF%9D%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F"><span class="toc-text">13. 如果下游服务（例如 refund service）宕机，你们的系统如何实现 graceful degradation？消息是否会丢失？如何确保最终一致性？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-%E5%9C%A8%E4%BD%A0%E5%BC%80%E5%8F%91-Return-Management-System-%E7%9A%84%E8%BF%87%E7%A8%8B%E4%B8%AD%EF%BC%8C%E4%BD%A0%E6%9C%80%E6%9C%89%E6%88%90%E5%B0%B1%E6%84%9F%E7%9A%84%E4%B8%80%E9%A1%B9%E8%B4%A1%E7%8C%AE%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">14. 在你开发 Return Management System 的过程中，你最有成就感的一项贡献是什么？为什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#15-%E9%81%87%E5%88%B0%E5%9B%A2%E9%98%9F%E6%B2%9F%E9%80%9A%E9%97%AE%E9%A2%98%EF%BC%8C%E4%BD%A0%E6%98%AF%E6%80%8E%E4%B9%88%E5%8A%9E%E7%9A%84%EF%BC%9F%E6%9C%89%E6%B2%A1%E6%9C%89%E4%BE%8B%E5%AD%90%EF%BC%9F"><span class="toc-text">15. 遇到团队沟通问题，你是怎么办的？有没有例子？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Can-you-talk-about-CI-CD"><span class="toc-text">Can you talk about CI&#x2F;CD?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#How-to-use-docker-in-the-Spring-Boot"><span class="toc-text">How to use docker in the Spring Boot?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ElasticSearch-why-do-you-use-it"><span class="toc-text">ElasticSearch why do you use it</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-command-you-used-in-the-project"><span class="toc-text">Git command you used in the project</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#difference-git-merge-and-rebase"><span class="toc-text">difference git merge and rebase</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Abstract-class-vs-Interface-When-to-use-abstract-class-and-when-to-use-interface"><span class="toc-text">Abstract class vs. Interface. When to use abstract class and when to use interface?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%94%A5New-feature-of-Java-8-Give-an-example-of-how-you-use-them-in-your-project"><span class="toc-text">🔥New feature of Java 8. Give an example of how you use them in your project</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Types-of-Exceptions-and-how-do-you-deal-with-exceptions-in-your-project"><span class="toc-text">Types of Exceptions and how do you deal with exceptions in your project?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generics-and-how-do-you-use-generics-in-your-project"><span class="toc-text">Generics and how do you use generics in your project?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-OOP-4-principles-and-explain-each-of-them"><span class="toc-text">Java OOP 4 principles, and explain each of them</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#If-java-8-allows-default-method-in-interface-so-what-is-the-real-difference-between-interface-and-abstract-class"><span class="toc-text">If java 8 allows default method in interface, so what is the real difference between interface and abstract class?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Serialization-What-is-Serializable-and-SerialVersionUID"><span class="toc-text">Serialization, What is Serializable and SerialVersionUID?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap-how-does-it-work-internally-what-is-hash-collision"><span class="toc-text">HashMap: how does it work internally, what is hash collision</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88equals-%E5%92%8C-hashcode%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC%E5%BF%85%E9%A1%BB%E4%B8%80%E8%87%B4"><span class="toc-text">为什么equals 和 hashcode的返回值必须一致</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#What-is-the-Functional-Interface-Java-8-built-in-functional-interface"><span class="toc-text">What is the Functional Interface? Java 8 built in functional interface?</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Implement-a-singleton"><span class="toc-text">Implement a singleton</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#why-2-if-statement-double-check"><span class="toc-text">why 2 if statement double check?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Do-you-know-about-the-Executor-Service-and-Future"><span class="toc-text">Do you know about the Executor Service and Future?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Explain-the-Factory-design-pattern"><span class="toc-text">Explain the Factory design pattern</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#What-design-patterns-did-you-worked-on-before"><span class="toc-text">What design patterns did you worked on before?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#How-to-customize-an-Exception"><span class="toc-text">How to customize an Exception?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#What-is-Optional"><span class="toc-text">What is Optional?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayList-vs-LinkedList-which-one-to-choose"><span class="toc-text">ArrayList vs LinkedList, which one to choose?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-8-Intermediate-operator-and-terminal-operator-in-stream-api"><span class="toc-text">Java 8: Intermediate operator and terminal operator in stream api</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#How-do-you-create-a-thread"><span class="toc-text">How do you create a thread?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#How-does-thread-communicate-interact-share-data-with-each-other"><span class="toc-text">How does thread communicate&#x2F;interact&#x2F;share data with each other?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#What-are-the-meaning-of-thread-methods-join-wait-sleep-yield"><span class="toc-text">What are the meaning of thread methods: join, wait, sleep, yield</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#How-does-ConcurrentHashMap-works"><span class="toc-text">How does ConcurrentHashMap works?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#What-is-ConcurrentModificationException-and-how-to-handle-it"><span class="toc-text">What is ConcurrentModificationException and how to handle it?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Relationship-between-equals-and-hashcode"><span class="toc-text">Relationship between equals() and hashcode()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#How-to-make-class-immutable"><span class="toc-text">How to make class immutable?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#What-is-the-deadlock-How-to-FIND-it-How-to-avoid-it"><span class="toc-text">What is the deadlock? How to FIND it? How to avoid it?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#What-is-fail-fast-and-fail-safe"><span class="toc-text">What is fail-fast and fail-safe?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Map-vs-FlatMap"><span class="toc-text">Map vs. FlatMap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#why-using-static-and-why-not"><span class="toc-text">why using static and why not?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Difference-Synchronized-ThreadLocal-Volatile-AtomicInteger"><span class="toc-text">Difference: Synchronized, ThreadLocal, Volatile, AtomicInteger</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#How-does-string-works-Why-is-String-immutable-in-Java"><span class="toc-text">How does string works? Why is String immutable in Java?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#How-string-memory-works"><span class="toc-text">How string memory works:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Why-is-string-immutable"><span class="toc-text">Why is string immutable:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#New-features-in-java-11-and-17"><span class="toc-text">New features in java 11 and 17</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Suppose-when-you-have-Employee-class-to-store-data-when-do-you-use-list-or-map"><span class="toc-text">Suppose when you have Employee class to store data, when do you use list or map</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Difference-Arraylist-vs-LinkedList-when-to-use-which"><span class="toc-text">Difference: Arraylist vs LinkedList, when to use which</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Difference-future-vs-completableFuture"><span class="toc-text">Difference future vs completableFuture</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JDK-vs-JRE-vs-JVM"><span class="toc-text">JDK vs JRE vs JVM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Optimistic-locking-and-pessimistic-locking-mainly-differ-in-how-they-handle-conflicts-%E6%B3%A8%E6%84%8F%EF%BC%9A%E8%BF%99%E4%B8%A4%E4%B8%AA%E5%8D%95%E8%AF%8D%E5%8F%91%E9%9F%B3"><span class="toc-text">Optimistic locking and pessimistic locking mainly differ in how they handle conflicts. 注意：这两个单词发音</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Even-if-an-index-exists-the-database-may-still-choose-not-to-use-it-for-several-reasons"><span class="toc-text">Even if an index exists, the database may still choose not to use it for several reasons.</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#What-is-the-CAP-theorem"><span class="toc-text">What is the CAP theorem?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Tell-me-about-a-time-you-disagreed-with-a-product-manager-stakeholder-API-consumer-about-a-requirement-or-design-and-how-you-handled-it"><span class="toc-text">1 Tell me about a time you disagreed with a product manager &#x2F; stakeholder &#x2F; API consumer about a requirement or design, and how you handled it.</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Tell-me-about-a-time-you-worked-on-a-component-service-or-issue-that-was-outside-your-service-boundary-or-team-ownership-and-still-took-responsibility-to-get-it-done"><span class="toc-text">2 Tell me about a time you worked on a component, service, or issue that was outside your service boundary or team ownership, and still took responsibility to get it done.</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Tell-me-about-a-time-you-simplified-a-complex-system-API-or-introducing-a-cleaner-architecture"><span class="toc-text">3 Tell me about a time you simplified a complex system, API, or introducing a cleaner architecture.</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Tell-me-about-a-time-your-service-API-did-not-meet-the-expected-behavior-or-SLA-Service-Level-Agreement-%E5%8F%AF%E7%90%86%E8%A7%A3%E4%B8%BA%E6%88%90%E5%8A%9F%E7%8E%87%EF%BC%8C%E5%93%8D%E5%BA%94%E6%97%B6%E9%97%B4%EF%BC%8C%E9%94%99%E8%AF%AF%E7%8E%87-and-what-you-did-to-fix-it"><span class="toc-text">4 Tell me about a time your service&#x2F;API did not meet the expected behavior or SLA (Service Level Agreement 可理解为成功率，响应时间，错误率), and what you did to fix it.</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-Tell-me-about-a-time-you-took-on-work-outside-of-your-comfort-area"><span class="toc-text">5 Tell me about a time you took on work outside of your comfort area</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-Tell-me-about-a-time-you-refused-to-compromise-and-insisted-on-high-standards"><span class="toc-text">6 Tell me about a time you refused to compromise and insisted on high standards</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-Tell-me-about-a-time-you-did-something-that-made-a-big-impact-beyond-your-scope"><span class="toc-text">7 Tell me about a time you did something that made a big impact beyond your scope</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-Tell-me-about-a-time-you-made-a-quick-decision-without-consulting-your-manager"><span class="toc-text">8 Tell me about a time you made a quick decision without consulting your manager</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-Tell-me-about-a-time-you-received-critical-negative-feedback-How-did-you-handle-it"><span class="toc-text">9 Tell me about a time you received critical &#x2F; negative feedback. How did you handle it?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-Tell-me-about-a-time-you-strongly-disagreed-with-your-manager-or-team-How-did-you-handle-it"><span class="toc-text">10 Tell me about a time you strongly disagreed with your manager or team. How did you handle it?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-Tell-me-about-a-time-you-had-a-tight-deadline-What-trade-offs-did-you-make"><span class="toc-text">11 Tell me about a time you had a tight deadline. What trade-offs did you make?</span></a></li></ol>
     </div>
   </section>
 
@@ -3393,7 +4068,7 @@ How to find all elements in a HashMap123for (K key : map.keySet()) &#1...</p>
 
 
   <script>
-  let imgs = ["https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/002.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/025.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/039.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/046.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/006.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/001.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/016.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/038.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/052.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/033.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/035.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/019.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/042.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/034.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/004.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/012.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/005.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/056.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/051.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/003.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/054.webp"];
+  let imgs = ["https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/054.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/016.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/039.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/001.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/051.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/056.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/019.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/033.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/002.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/046.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/038.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/035.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/006.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/042.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/004.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/005.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/034.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/052.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/003.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/025.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/012.webp"];
   let index = 0;
   let IntervalParallax = null;
 
@@ -3622,7 +4297,7 @@ How to find all elements in a HashMap123for (K key : map.keySet()) &#1...</p>
 </script>
 
 
-  <script type="application/ld+json">[{"@context":"http://schema.org","@type":"Organization","name":"Hexo","url":"http://example.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"http://schema.org","@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/","sameAs":["https://github.com/volantis-x"],"description":"xxx"},{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"http://example.com/","name":"Hexo"}},{"@type":"ListItem","position":3,"item":{"@id":"http://example.com/2026/05/10/BQ针对简历/"}}]},{"@context":"http://schema.org","@type":"WebSite","name":"Hexo","url":"http://example.com/","keywords":null,"description":"xxx","author":{"@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/","description":"xxx"},"publisher":{"@type":"Organization","name":"Hexo","url":"http://example.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"http://example.com?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"http://schema.org","@type":"BlogPosting","description":"xxx","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2026/05/10/BQ%E9%92%88%E5%AF%B9%E7%AE%80%E5%8E%86/"},"author":{"@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"http://example.com/2026/05/10/BQ%E9%92%88%E5%AF%B9%E7%AE%80%E5%8E%86/","wordCount":0,"datePublished":"2026-05-11T01:04:36.637Z","dateModified":"2026-05-21T05:24:13.914Z","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
+  <script type="application/ld+json">[{"@context":"http://schema.org","@type":"Organization","name":"Hexo","url":"http://example.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"http://schema.org","@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/","sameAs":["https://github.com/volantis-x"],"description":"xxx"},{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"http://example.com/","name":"Hexo"}},{"@type":"ListItem","position":3,"item":{"@id":"http://example.com/2026/05/10/BQ针对简历/"}}]},{"@context":"http://schema.org","@type":"WebSite","name":"Hexo","url":"http://example.com/","keywords":null,"description":"xxx","author":{"@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/","description":"xxx"},"publisher":{"@type":"Organization","name":"Hexo","url":"http://example.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"http://example.com?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"http://schema.org","@type":"BlogPosting","description":"xxx","inLanguage":"en","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2026/05/10/BQ%E9%92%88%E5%AF%B9%E7%AE%80%E5%8E%86/"},"author":{"@type":"Person","name":"John Doe","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://example.com/"},"publisher":{"@type":"Organization","name":"Hexo","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"http://example.com/2026/05/10/BQ%E9%92%88%E5%AF%B9%E7%AE%80%E5%8E%86/","wordCount":0,"datePublished":"2026-05-11T01:04:36.637Z","dateModified":"2026-06-10T07:21:41.075Z","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
 
 
 
